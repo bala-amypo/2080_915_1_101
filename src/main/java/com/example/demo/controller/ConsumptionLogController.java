@@ -1,0 +1,41 @@
+package com.example.demo.controller;
+
+import com.example.demo.model.ConsumptionLog;
+import com.example.demo.service.ConsumptionLogService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/consumption")
+public class ConsumptionLogController {
+
+    private final ConsumptionLogService consumptionLogService;
+
+    public ConsumptionLogController(ConsumptionLogService consumptionLogService) {
+        this.consumptionLogService = consumptionLogService;
+    }
+
+    // LOG CONSUMPTION
+    @PostMapping("/{stockRecordId}")
+    public ConsumptionLog logConsumption(
+            @PathVariable Long stockRecordId,
+            @RequestBody ConsumptionLog log) {
+
+        return consumptionLogService.logConsumption(stockRecordId, log);
+    }
+
+    // GET LOGS BY STOCK RECORD
+    @GetMapping("/record/{stockRecordId}")
+    public List<ConsumptionLog> getLogsByStockRecord(
+            @PathVariable Long stockRecordId) {
+
+        return consumptionLogService.getLogsByStockRecord(stockRecordId);
+    }
+
+    // GET LOG BY ID
+    @GetMapping("/{id}")
+    public ConsumptionLog getLog(@PathVariable Long id) {
+        return consumptionLogService.getLog(id);
+    }
+}
