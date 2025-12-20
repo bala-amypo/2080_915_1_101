@@ -18,7 +18,7 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         // Define the server URL for the workspace environment
         Server server = new Server();
-        server.setUrl("https://9081.pro604cr.amypo.ai");
+        server.setUrl("https://9081.pro604cr.amypo.ai/");
         server.setDescription("Workspace Server");
 
         return new OpenAPI()
