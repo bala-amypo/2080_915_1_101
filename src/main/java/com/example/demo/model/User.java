@@ -23,12 +23,12 @@ public class User {
     private String email; // [cite: 77, 81]
 
     @Column(nullable = false)
-    private String password; // Encrypted [cite: 78, 81]
+    private String password; // [cite: 78, 81]
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles; // Stored as enum collection [cite: 79, 82]
+    private Set<Role> roles; // 
 
     private LocalDateTime createdAt; // [cite: 80]
 }
