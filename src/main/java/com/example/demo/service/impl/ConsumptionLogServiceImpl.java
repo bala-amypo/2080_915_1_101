@@ -21,30 +21,30 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
     public ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log) {
         // Load target stock record [cite: 190]
         StockRecord sr = stockRecordRepository.findById(stockRecordId)
-                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found")); [cite: 190]
+                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
 
         // Validate consumedQuantity > 0 [cite: 191]
         if (log.getConsumedQuantity() == null || log.getConsumedQuantity() <= 0) {
-            throw new IllegalArgumentException("consumedQuantity must be greater than zero"); [cite: 58]
+            throw new IllegalArgumentException("consumedQuantity must be greater than zero");
         }
 
         // Validate consumedDate is not in the future [cite: 191]
         if (log.getConsumedDate() != null && log.getConsumedDate().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("consumedDate cannot be future"); [cite: 59, 192]
+            throw new IllegalArgumentException("consumedDate cannot be future");
         }
 
-        log.setStockRecord(sr); [cite: 193]
-        return logRepository.save(log); [cite: 193]
+        log.setStockRecord(sr);
+        return logRepository.save(log);
     }
 
     @Override
     public List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId) {
-        return logRepository.findByStockRecordId(stockRecordId); [cite: 194]
+        return logRepository.findByStockRecordId(stockRecordId);
     }
 
     @Override
     public ConsumptionLog getLog(Long id) {
         return logRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found")); [cite: 195]
+                .orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found"));
     }
 }

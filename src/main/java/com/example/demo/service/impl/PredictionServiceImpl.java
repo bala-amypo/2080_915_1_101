@@ -21,7 +21,7 @@ public class PredictionServiceImpl implements PredictionService {
     public PredictionRule createRule(PredictionRule rule) {
         // Validate averageDaysWindow > 0 [cite: 202]
         if (rule.getAverageDaysWindow() == null || rule.getAverageDaysWindow() <= 0) {
-            throw new IllegalArgumentException("averageDaysWindow must be greater than zero"); [cite: 70]
+            throw new IllegalArgumentException("averageDaysWindow must be greater than zero");
         }
         // Validate minDailyUsage <= maxDailyUsage [cite: 202]
         if (rule.getMinDailyUsage() > rule.getMaxDailyUsage()) {
@@ -55,11 +55,11 @@ public class PredictionServiceImpl implements PredictionService {
         int threshold = sr.getReorderThreshold();
         int daysUntilRestock = (int) Math.max(0, (currentLevel - threshold) / averageDailyUsage);
 
-        return LocalDate.now().plusDays(daysUntilRestock); [cite: 206]
+        return LocalDate.now().plusDays(daysUntilRestock);
     }
 
     @Override
     public List<PredictionRule> getAllRules() {
-        return ruleRepository.findAll(); [cite: 204]
+        return ruleRepository.findAll();
     }
 }
