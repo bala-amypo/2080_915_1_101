@@ -20,12 +20,12 @@ public class WarehouseServiceImpl implements WarehouseService {
     public Warehouse createWarehouse(Warehouse warehouse) {
         // Validation: Location must not be empty [cite: 38, 166]
         if (warehouse.getLocation() == null || warehouse.getLocation().isBlank()) {
-            throw new IllegalArgumentException("Location must not be empty"); [cite: 166]
+            throw new IllegalArgumentException("Location must not be empty");
         }
 
         // Validation: Warehouse name must be unique [cite: 38, 166]
         if (warehouseRepository.findByWarehouseName(warehouse.getWarehouseName()).isPresent()) {
-            throw new IllegalArgumentException("Warehouse name must be unique"); [cite: 166]
+            throw new IllegalArgumentException("Warehouse name must be unique");
         }
 
         // Set createdAt if missing 
@@ -40,7 +40,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     public Warehouse getWarehouse(Long id) {
         // Throws ResourceNotFoundException if no record exists [cite: 168]
         return warehouseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found")); [cite: 168]
+                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
     }
 
     @Override
