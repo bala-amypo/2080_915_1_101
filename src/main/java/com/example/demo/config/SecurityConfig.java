@@ -1,4 +1,5 @@
 package com.example.demo.config;
+package com.example.demo.config;
 
 import com.example.demo.security.JwtAuthenticationEntryPoint;
 import com.example.demo.security.JwtAuthenticationFilter;
