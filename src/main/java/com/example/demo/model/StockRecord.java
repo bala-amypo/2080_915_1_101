@@ -20,10 +20,31 @@ public class StockRecord {
     @ManyToOne
     private Warehouse warehouse;
 
-    public int getCurrentQuantity() { return currentQuantity; }
-    public int getReorderThreshold() { return reorderThreshold; }
+    public int getCurrentQuantity() {
+        return currentQuantity;
+    }
 
-    public void setProduct(Product product) { this.product = product; }
-    public void setWarehouse(Warehouse warehouse) { this.warehouse = warehouse; }
-    public void setLastUpdated(LocalDateTime lastUpdated) { this.lastUpdated = lastUpdated; }
+    public int getReorderThreshold() {
+        return reorderThreshold;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public Warehouse getWarehouse() {
+        return warehouse;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setWarehouse(Warehouse warehouse) {
+        this.warehouse = warehouse;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 }
