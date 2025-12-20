@@ -1,10 +1,9 @@
 package com.example.demo.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter @Setter
+@Data
 public class AuthRequest {
-    private String email;
-    private String password;
+    private String email;    // Email used for login [cite: 87]
+    private String password; // Raw password provided by user [cite: 88]
 }

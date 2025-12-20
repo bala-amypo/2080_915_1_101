@@ -1,35 +1,14 @@
 package com.example.demo.dto;
 
+import lombok.Builder;
+import lombok.Data;
 import java.util.Set;
 
+@Data
+@Builder
 public class AuthResponse {
-
-    private String token;
-    private Long userId;
-    private String email;
-    private Set<String> roles;
-
-    // ✅ MUST BE PUBLIC
-    public AuthResponse(String token, Long userId, String email, Set<String> roles) {
-        this.token = token;
-        this.userId = userId;
-        this.email = email;
-        this.roles = roles;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Set<String> getRoles() {
-        return roles;
-    }
+    private String token;     // JWT token [cite: 92]
+    private Long userId;      // ID of authenticated user [cite: 93]
+    private String email;     // User email [cite: 94]
+    private Set<String> roles; // Granted roles (e.g., ROLE_ADMIN) [cite: 95]
 }

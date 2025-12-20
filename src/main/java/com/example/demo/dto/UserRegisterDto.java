@@ -1,15 +1,12 @@
 package com.example.demo.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 public class UserRegisterDto {
-    private String name;
-    private String email;
-    private String password;
-    private Set<String> roles;
+    private String name;     // User full name [cite: 100]
+    private String email;    // Registration email [cite: 101]
+    private String password; // Raw password to be encoded [cite: 102]
+    private Set<String> roles; // Optional roles [cite: 103]
 }
