@@ -1,7 +1,5 @@
 package com.example.demo.config;
-package com.example.demo.security;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,14 +8,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
@@ -27,43 +22,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
 
-            try {
-                Claims claims = jwtProvider.validateToken(token);
-
-                String email = claims.getSubject();
-
-                @SuppressWarnings("unchecked")
-                List<String> roles = ((List<?>) claims.get("roles"))
-                        .stream()
-                        .map(Object::toString)
-                        .collect(Collectors.toList());
+            if (jwtProvider.validateToken(token)) {
+                String email = jwtProvider.getEmail(token);
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 email,
                                 null,
-                                roles.stream()
+                                jwtProvider.getRoles(token)
+                                        .stream()
                                         .map(SimpleGrantedAuthority::new)
-                                        .collect(Collectors.toSet())
+                                        .collect(Collectors.toList())
                         );
 
                 authentication.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request));
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            } catch (Exception ignored) {
-                SecurityContextHolder.clearContext();
             }
         }
 
