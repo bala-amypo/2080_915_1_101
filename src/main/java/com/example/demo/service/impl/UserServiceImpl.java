@@ -4,7 +4,7 @@ import com.example.demo.dto.*;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.*;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.security.JwtProvider;
+import com.example.demo.config.JwtProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
