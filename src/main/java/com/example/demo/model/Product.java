@@ -1,27 +1,27 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "products")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // [cite: 25]
 
-    private String productName;
-    private String sku;
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private String productName; // Must not be empty [cite: 26, 30]
 
-    public Long getId() { return id; }
+    @Column(unique = true, nullable = false)
+    private String sku; // Must be unique [cite: 27, 30]
 
-    public String getProductName() { return productName; }
-    public void setProductName(String productName) { this.productName = productName; }
+    private String category; // [cite: 28]
 
-    public String getSku() { return sku; }
-    public void setSku(String sku) { this.sku = sku; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    private LocalDateTime createdAt; // [cite: 29]
 }

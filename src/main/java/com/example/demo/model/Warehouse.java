@@ -1,23 +1,25 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "warehouses")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Warehouse {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // [cite: 34]
 
-    private String location;
-    private LocalDateTime createdAt;
+    @Column(unique = true, nullable = false)
+    private String warehouseName; // Must be unique [cite: 35, 38]
 
-    public Long getId() { return id; }
+    @Column(nullable = false)
+    private String location; // Must not be empty [cite: 36, 38]
 
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    private LocalDateTime createdAt; // [cite: 37]
 }
