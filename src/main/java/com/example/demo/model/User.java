@@ -1,44 +1,34 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // [cite: 75]
 
-    private String name;
+    @Column(nullable = false)
+    private String name; // [cite: 76, 81]
 
-    @Column(unique = true)
-    private String email;
+    @Column(unique = true, nullable = false)
+    private String email; // [cite: 77, 81]
 
-    private String password;
+    @Column(nullable = false)
+    private String password; // Encrypted [cite: 78, 81]
 
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles;
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles; // Stored as enum collection [cite: 79, 82]
 
-    private LocalDateTime createdAt;
-
-    // getters
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getPassword() { return password; }
-    public Set<String> getRoles() { return roles; }
-
-    // setters
-    public void setName(String name) { this.name = name; }
-    public void setEmail(String email) { this.email = email; }
-    public void setPassword(String password) { this.password = password; }
-    public void setRoles(Set<String> roles) { this.roles = roles; }
-
-    // ✅ REQUIRED FIX
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    private LocalDateTime createdAt; // [cite: 80]
 }
