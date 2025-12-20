@@ -5,8 +5,6 @@ import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.UserRegisterDto;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,15 +17,13 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // REGISTER
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody UserRegisterDto dto) {
-        return new ResponseEntity<>(userService.register(dto), HttpStatus.CREATED);
+    public User register(@RequestBody UserRegisterDto dto) {
+        return userService.register(dto);
     }
 
-    // LOGIN
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        return ResponseEntity.ok(userService.login(request));
+    public AuthResponse login(@RequestBody AuthRequest request) {
+        return userService.login(request);
     }
 }
