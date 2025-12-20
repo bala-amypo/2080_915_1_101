@@ -24,20 +24,23 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(); // [cite: 290]
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()) // [cite: 292]
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // [cite: 292]
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll() // 
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // 
-                .requestMatchers("/api/**").authenticated() // 
-                .anyRequest().authenticated()
-            );
+   @Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.csrf(csrf -> csrf.disable())
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+            // 1. Explicitly allow the root and error paths
+            .requestMatchers("/", "/error").permitAll() 
+            // 2. Allow authentication and Swagger documentation
+            .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+            // 3. Protect all business API endpoints
+            .requestMatchers("/api/**").authenticated()
+            .anyRequest().authenticated()
+        );
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // [cite: 293]
-        return http.build();
-    }
+    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    return http.build();
+}
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
