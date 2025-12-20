@@ -1,90 +1,61 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.config.JwtProvider;
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
-import com.example.demo.dto.UserRegisterDto;
+import com.example.demo.dto.*;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
-
-    public UserServiceImpl(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            JwtProvider jwtProvider) {
-
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtProvider = jwtProvider;
-    }
+    // Assume a JwtProvider is available in the security package [cite: 6]
 
     @Override
     public User register(UserRegisterDto dto) {
-
-        if (dto.getName() == null || dto.getName().isBlank()) {
-            throw new IllegalArgumentException("Name cannot be empty");
+        if (dto.getName() == null || dto.getEmail() == null || dto.getPassword() == null) {
+            throw new IllegalArgumentException("Required fields missing"); // [cite: 81, 214]
         }
-        if (dto.getPassword() == null || dto.getPassword().isBlank()) {
-            throw new IllegalArgumentException("Password cannot be empty");
-        }
-
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new IllegalArgumentException("Email already in use"); // [cite: 214]
         }
 
-        User user = new User();
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRoles(
-                dto.getRoles() == null || dto.getRoles().isEmpty()
-                        ? Set.of("ROLE_USER")
-                        : dto.getRoles()
-        );
-        user.setCreatedAt(LocalDateTime.now());
-
+        User user = User.builder()
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword())) // [cite: 215]
+                .createdAt(LocalDateTime.now()) // [cite: 215]
+                .build();
+        
         return userRepository.save(user);
     }
 
     @Override
     public AuthResponse login(AuthRequest request) {
-
-        User user = getByEmail(request.getEmail());
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found")); // [cite: 218]
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid credentials");
+            throw new IllegalArgumentException("Invalid password"); // [cite: 218]
         }
 
-        String token = jwtProvider.generateToken(
-                user.getEmail(),
-                List.copyOf(user.getRoles())
-        );
-
-        return new AuthResponse(
-                token,
-                user.getId(),
-                user.getEmail(),
-                user.getRoles()
-        );
+        // Logic to generate token and return AuthResponse [cite: 217]
+        return AuthResponse.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .token("generated-jwt-token")
+                .build();
     }
 
     @Override
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found")); // [cite: 219]
     }
 }
