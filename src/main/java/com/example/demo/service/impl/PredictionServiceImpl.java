@@ -25,18 +25,18 @@ public class PredictionServiceImpl implements PredictionService {
         }
         // Validate minDailyUsage <= maxDailyUsage [cite: 202]
         if (rule.getMinDailyUsage() > rule.getMaxDailyUsage()) {
-            throw new IllegalArgumentException("minDailyUsage must be less than or equal to maxDailyUsage"); [cite: 70]
+            throw new IllegalArgumentException("minDailyUsage must be less than or equal to maxDailyUsage");
         }
         
-        rule.setCreatedAt(LocalDateTime.now()); [cite: 203]
-        return ruleRepository.save(rule); [cite: 203]
+        rule.setCreatedAt(LocalDateTime.now());
+        return ruleRepository.save(rule);
     }
 
     @Override
     public LocalDate predictRestockDate(Long stockRecordId) {
         // Load stock record [cite: 205]
         StockRecord sr = stockRecordRepository.findById(stockRecordId)
-                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found")); [cite: 207]
+                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
 
         // Load logs to compute average daily usage [cite: 205]
         List<ConsumptionLog> logs = logRepository.findByStockRecordId(stockRecordId);
