@@ -9,23 +9,53 @@ public class StockRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int currentQuantity;
+
+    private int reorderThreshold;
+
     @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @ManyToOne
+    @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
 
-    private int stock;
+    // ===== GETTERS & SETTERS =====
 
-    public StockRecord() {}
+    public Long getId() {
+        return id;
+    }
 
-    public Long getId() { return id; }
-    public Product getProduct() { return product; }
-    public Warehouse getWarehouse() { return warehouse; }
-    public int getStock() { return stock; }
+    public int getCurrentQuantity() {
+        return currentQuantity;
+    }
 
-    public void setId(Long id) { this.id = id; }
-    public void setProduct(Product product) { this.product = product; }
-    public void setWarehouse(Warehouse warehouse) { this.warehouse = warehouse; }
-    public void setStock(int stock) { this.stock = stock; }
+    public void setCurrentQuantity(int currentQuantity) {
+        this.currentQuantity = currentQuantity;
+    }
+
+    public int getReorderThreshold() {
+        return reorderThreshold;
+    }
+
+    public void setReorderThreshold(int reorderThreshold) {
+        this.reorderThreshold = reorderThreshold;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Warehouse getWarehouse() {
+        return warehouse;
+    }
+
+    public void setWarehouse(Warehouse warehouse) {
+        this.warehouse = warehouse;
+    }
 }
