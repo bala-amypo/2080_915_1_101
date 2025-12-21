@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface ConsumptionLogService {
 
-    ConsumptionLog saveLog(ConsumptionLog log);
+    ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log);
 
-    List<ConsumptionLog> getLogsByStockRecordId(Long stockRecordId);
+    List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId);
+
+    ConsumptionLog getLog(Long id);
 }

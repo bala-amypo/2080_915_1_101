@@ -3,13 +3,12 @@ package com.example.demo.service;
 import com.example.demo.model.Warehouse;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface WarehouseService {
 
-    Warehouse saveWarehouse(Warehouse warehouse);
+    Warehouse createWarehouse(Warehouse warehouse);
 
-    Optional<Warehouse> getByWarehouseName(String warehouseName);
+    Warehouse getWarehouse(Long id);
 
     List<Warehouse> getAllWarehouses();
 }

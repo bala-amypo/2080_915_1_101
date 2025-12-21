@@ -1,12 +1,13 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Warehouse;
 import com.example.demo.repository.WarehouseRepository;
 import com.example.demo.service.WarehouseService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class WarehouseServiceImpl implements WarehouseService {
@@ -18,13 +19,20 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public Warehouse saveWarehouse(Warehouse warehouse) {
+    public Warehouse createWarehouse(Warehouse warehouse) {
+        if (warehouse.getLocation() == null || warehouse.getLocation().isBlank()) {
+            throw new IllegalArgumentException("location cannot be empty");
+        }
+
+        warehouse.setCreatedAt(LocalDateTime.now());
         return warehouseRepository.save(warehouse);
     }
 
     @Override
-    public Optional<Warehouse> getByWarehouseName(String warehouseName) {
-        return warehouseRepository.findByWarehouseName(warehouseName);
+    public Warehouse getWarehouse(Long id) {
+        return warehouseRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Warehouse not found"));
     }
 
     @Override
