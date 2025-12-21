@@ -5,3 +5,9 @@ import com.example.demo.repository.*;
 import com.example.demo.service.*;
 import org.springframework.stereotype.Service;
 import java.util.List;
+@Service
+public class PredictionServiceImpl implements PredictionService {
+    public PredictionResponse predict() {
+        return new PredictionResponse("Stock level is sufficient");
+    }
+}
