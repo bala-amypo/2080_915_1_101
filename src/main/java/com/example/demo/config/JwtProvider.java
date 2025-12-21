@@ -10,9 +10,10 @@ import java.util.Date;
 @Component
 public class JWTProvider {
 
-    private final String jwtSecret = "YourSecretKey12345"; // replace with secure key
+    private final String jwtSecret = "YourSecretKey12345"; // Replace with secure key
     private final long jwtExpirationMs = 86400000; // 1 day
 
+    // Generate JWT token
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -22,6 +23,7 @@ public class JWTProvider {
                 .compact();
     }
 
+    // Extract username from token
     public String getUsernameFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -30,6 +32,7 @@ public class JWTProvider {
                 .getSubject();
     }
 
+    // Validate token
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
@@ -39,6 +42,7 @@ public class JWTProvider {
         }
     }
 
+    // Get all claims
     public Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
     }
