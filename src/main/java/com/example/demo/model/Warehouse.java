@@ -6,20 +6,13 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "warehouses")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class Warehouse {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // [cite: 34]
-
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(unique = true, nullable = false)
-    private String warehouseName; // Must be unique [cite: 35, 38]
-
+    private String warehouseName;
     @Column(nullable = false)
-    private String location; // Must not be empty [cite: 36, 38]
-
-    private LocalDateTime createdAt; // [cite: 37]
+    private String location;
+    private LocalDateTime createdAt;
 }

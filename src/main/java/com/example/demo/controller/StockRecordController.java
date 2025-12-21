@@ -10,28 +10,20 @@ import java.util.List;
 @RequestMapping("/api/stocks")
 @RequiredArgsConstructor
 public class StockRecordController {
-    private final StockRecordService stockRecordService;
+    private final StockRecordService service;
 
     @PostMapping("/{productId}/{warehouseId}")
-    public StockRecord createStockRecord(
-            @PathVariable Long productId, 
-            @PathVariable Long warehouseId, 
-            @RequestBody StockRecord record) {
-        return stockRecordService.createStockRecord(productId, warehouseId, record); // [cite: 246]
+    public StockRecord create(@PathVariable Long productId, @PathVariable Long warehouseId, @RequestBody StockRecord record) {
+        return service.createStockRecord(productId, warehouseId, record);
     }
 
     @GetMapping("/product/{productId}")
     public List<StockRecord> getByProduct(@PathVariable Long productId) {
-        return stockRecordService.getRecordsBy_product(productId); // [cite: 248]
-    }
-
-    @GetMapping("/warehouse/{warehouseId}")
-    public List<StockRecord> getByWarehouse(@PathVariable Long warehouseId) {
-        return stockRecordService.getRecordsByWarehouse(warehouseId); // [cite: 250]
+        return service.getRecordsBy_product(productId);
     }
 
     @GetMapping("/{id}")
-    public StockRecord getStockRecord(@PathVariable Long id) {
-        return stockRecordService.getStockRecord(id); // [cite: 252]
+    public StockRecord getOne(@PathVariable Long id) {
+        return service.getStockRecord(id);
     }
 }
