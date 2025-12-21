@@ -8,9 +8,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     
-    // This fixed Error 2 & 3
+    // Fixes the findByEmail errors in UserServiceImpl
     Optional<User> findByEmail(String email);
 
-    // This is also needed for your Security Logic
+    // Needed for login via username
     Optional<User> findByUsername(String username);
 }

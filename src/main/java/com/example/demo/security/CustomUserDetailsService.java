@@ -1,31 +1,28 @@
-package com.example.demo.security;
+package com.example.demo.model;
 
-import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
+@Entity
+@Table(name = "users")
+@Data // This generates getters, setters, equals, and toString
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final UserRepository userRepository;
+    @Column(unique = true, nullable = false)
+    private String username;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Column(unique = true, nullable = false)
+    private String email;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(), 
-                user.getPassword(), 
-                new ArrayList<>() // Add roles here if needed
-        );
-    }
+    @Column(nullable = false)
+    private String password;
+    
+    // If you have a Role enum
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
