@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ConsumptionLogRepository extends JpaRepository<ConsumptionLog, Long> {
 
-    List<ConsumptionLog> findByStockRecordId(Long stockRecordId);
+    List<ConsumptionLog> findByStockRecord_Id(Long stockRecordId);
 }

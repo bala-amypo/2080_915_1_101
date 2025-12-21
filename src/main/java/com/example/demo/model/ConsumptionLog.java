@@ -10,23 +10,41 @@ public class ConsumptionLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int quantityUsed;
+
+    private LocalDate consumptionDate;
+
     @ManyToOne
-    private Product product;
+    @JoinColumn(name = "stock_record_id", nullable = false)
+    private StockRecord stockRecord;
 
-    private int consumedQuantity;
-    private LocalDate date;
+    // ===== GETTERS & SETTERS =====
 
-    public ConsumptionLog() {}
-
-    public Long getId() { return id; }
-    public Product getProduct() { return product; }
-    public int getConsumedQuantity() { return consumedQuantity; }
-    public LocalDate getDate() { return date; }
-
-    public void setId(Long id) { this.id = id; }
-    public void setProduct(Product product) { this.product = product; }
-    public void setConsumedQuantity(int consumedQuantity) {
-        this.consumedQuantity = consumedQuantity;
+    public Long getId() {
+        return id;
     }
-    public void setDate(LocalDate date) { this.date = date; }
+
+    public int getQuantityUsed() {
+        return quantityUsed;
+    }
+
+    public void setQuantityUsed(int quantityUsed) {
+        this.quantityUsed = quantityUsed;
+    }
+
+    public LocalDate getConsumptionDate() {
+        return consumptionDate;
+    }
+
+    public void setConsumptionDate(LocalDate consumptionDate) {
+        this.consumptionDate = consumptionDate;
+    }
+
+    public StockRecord getStockRecord() {
+        return stockRecord;
+    }
+
+    public void setStockRecord(StockRecord stockRecord) {
+        this.stockRecord = stockRecord;
+    }
 }
