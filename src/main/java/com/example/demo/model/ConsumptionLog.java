@@ -21,9 +21,7 @@ public class ConsumptionLog {
     @ManyToOne(optional = false)
     private StockRecord stockRecord;
 
-    @Column(nullable = false)
     private Integer consumedQuantity;
 
-    @Column(nullable = false)
     private LocalDate consumedDate;
 }

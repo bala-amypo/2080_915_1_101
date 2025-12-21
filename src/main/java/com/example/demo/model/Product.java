@@ -6,10 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "products",
-    uniqueConstraints = @UniqueConstraint(columnNames = "sku")
-)
+@Table(name = "products", uniqueConstraints = @UniqueConstraint(columnNames = "sku"))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,6 +26,5 @@ public class Product {
 
     private String category;
 
-    @Column(nullable = false)
     private LocalDateTime createdAt;
 }

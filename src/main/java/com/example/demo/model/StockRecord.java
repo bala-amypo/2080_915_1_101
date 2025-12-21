@@ -27,12 +27,9 @@ public class StockRecord {
     @ManyToOne(optional = false)
     private Warehouse warehouse;
 
-    @Column(nullable = false)
     private Integer currentQuantity;
 
-    @Column(nullable = false)
     private Integer reorderThreshold;
 
-    @Column(nullable = false)
     private LocalDateTime lastUpdated;
 }
