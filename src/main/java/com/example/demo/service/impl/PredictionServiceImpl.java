@@ -32,10 +32,9 @@ public class PredictionServiceImpl implements PredictionService {
     @Override
     public PredictionResponse predict(Long stockRecordId) {
 
-        StockRecord stockRecord = stockRecordRepository.findById(stockRecordId)
-                .orElseThrow(() -> new RuntimeException("Stock record not found"));
+        StockRecord stock = stockRecordRepository.findById(stockRecordId)
+                .orElseThrow(() -> new RuntimeException("Stock not found"));
 
-        // ✅ Correct repository method
         List<ConsumptionLog> logs =
                 consumptionLogRepository.findByStockRecord_Id(stockRecordId);
 
@@ -43,16 +42,23 @@ public class PredictionServiceImpl implements PredictionService {
                 .mapToInt(ConsumptionLog::getQuantityUsed)
                 .sum();
 
-        PredictionRule rule = predictionRuleRepository.findTopByOrderByIdDesc()
-                .orElseThrow(() -> new RuntimeException("Prediction rule not found"));
-
         boolean reorderRequired =
-                stockRecord.getCurrentQuantity() <= stockRecord.getReorderThreshold();
+                stock.getCurrentQuantity() <= stock.getReorderThreshold();
 
         return new PredictionResponse(
-                stockRecord.getId(),
+                stock.getId(),
                 totalConsumed,
                 reorderRequired
         );
+    }
+
+    @Override
+    public PredictionRule createRule(PredictionRule rule) {
+        return predictionRuleRepository.save(rule);
+    }
+
+    @Override
+    public List<PredictionRule> getAllRules() {
+        return predictionRuleRepository.findAll();
     }
 }
