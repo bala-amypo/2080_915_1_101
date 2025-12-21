@@ -1,6 +1,5 @@
 package com.example.demo.security;
 
-import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
@@ -16,13 +15,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = repo.findByUsername(username)
+        var user = repo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
+        return User.builder()
+                .username(user.getUsername())
                 .password(user.getPassword())
-                .roles(user.getRole().name())
+                .roles("USER")
                 .build();
     }
 }

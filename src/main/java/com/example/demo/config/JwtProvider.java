@@ -8,10 +8,10 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
-public class JWTProvider {
+public class JwtProvider {
 
-    private static final String SECRET =
-            "jwtsecretkeyjwtsecretkeyjwtsecretkey";
+    private static final String SECRET = "jwtsecretkeyjwtsecretkeyjwtsecretkey";
+    private static final long EXP = 86400000;
 
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
@@ -19,7 +19,7 @@ public class JWTProvider {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .setExpiration(new Date(System.currentTimeMillis() + EXP))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
