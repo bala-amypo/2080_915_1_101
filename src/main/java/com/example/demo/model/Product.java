@@ -5,14 +5,11 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "products") // [cite: 23]
-@Data @Builder @NoArgsConstructor @AllArgsConstructor // [cite: 21]
+@Data @NoArgsConstructor @AllArgsConstructor
 public class Product {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // [cite: 25]
-    private String productName; // [cite: 26]
-    @Column(unique = true)
-    private String sku; // [cite: 27]
-    private String category; // [cite: 28]
-    private LocalDateTime createdAt; // [cite: 29]
+    private Long id;
+    private String productName; // Matches getProductName()
+    private String sku;         // Matches getSku()
+    private LocalDateTime createdAt;
 }

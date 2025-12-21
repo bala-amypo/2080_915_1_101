@@ -1,28 +1,31 @@
-package com.example.demo.model;
+package com.example.demo.security;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 
-@Entity
-@Table(name = "users")
-@Data // This generates getters, setters, equals, and toString
-@NoArgsConstructor
-@AllArgsConstructor
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
 
-    @Column(unique = true, nullable = false)
-    private String username;
+    private final UserRepository userRepository;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-    @Column(nullable = false)
-    private String password;
-    
-    // If you have a Role enum
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(), 
+                user.getPassword(), 
+                new ArrayList<>()
+        );
+    }
 }

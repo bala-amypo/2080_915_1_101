@@ -5,15 +5,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "prediction_rules") // [cite: 62]
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data @NoArgsConstructor @AllArgsConstructor
 public class PredictionRule {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // [cite: 64]
-    @Column(unique = true)
-    private String ruleName; // [cite: 65]
-    private Integer averageDaysWindow; // [cite: 66]
-    private Integer minDailyUsage; // [cite: 67]
-    private Integer maxDailyUsage; // [cite: 68]
-    private LocalDateTime createdAt; // [cite: 69]
+    private Long id;
+    private String ruleName;        // Matches getRuleName()
+    private Integer averageDaysWindow; // Matches getAverageDaysWindow()
+    private Double minDailyUsage;   // Matches getMinDailyUsage()
+    private Double maxDailyUsage;   // Matches getMaxDailyUsage()
+    private LocalDateTime createdAt;
 }
