@@ -1,4 +1,4 @@
-package com.example.demo.security;
+package com.example.demo.config;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -9,8 +9,9 @@ import java.util.List;
 
 @Component
 public class JwtProvider {
+    // Generate a secure key for HS256
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long jwtExpirationDate = 3600000;
+    private final long jwtExpirationDate = 3600000; // 1 hour
 
     public String generateToken(String email, Long userId, List<String> roles) {
         return Jwts.builder()
