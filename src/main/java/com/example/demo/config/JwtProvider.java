@@ -7,14 +7,13 @@ import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long jwtExpirationDate = 3600000; // 1 hour
+    private final long jwtExpirationDate = 3600000; 
 
-    // Changed to Collection<?> to be more flexible with Set vs List from tests
+    // FIXED: Accepts Collection<?> to be compatible with List (tests) and Set (app)
     public String generateToken(String email, Long userId, Collection<String> roles) {
         return Jwts.builder()
                 .setSubject(email)
@@ -35,7 +34,7 @@ public class JwtProvider {
         return claims.getSubject();
     }
 
-    // Added to satisfy test requirement for getUserId(token)
+    // FIXED: Added getUserId method required by TestCaseHelper
     public Long getUserId(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)

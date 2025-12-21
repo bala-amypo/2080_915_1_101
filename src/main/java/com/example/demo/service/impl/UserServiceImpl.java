@@ -12,10 +12,8 @@ import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -32,61 +29,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(UserRegisterDto dto) {
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-        
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) throw new IllegalArgumentException("Email already exists");
         Set<Role> roles = new HashSet<>();
-        if (dto.getRoles() != null && !dto.getRoles().isEmpty()) {
+        if (dto.getRoles() != null) {
             dto.getRoles().forEach(r -> {
-                try {
-                    roles.add(Role.valueOf(r));
-                } catch (IllegalArgumentException e) {
-                    roles.add(Role.ROLE_USER);
-                }
+                try { roles.add(Role.valueOf(r)); } catch (Exception e) { roles.add(Role.ROLE_USER); }
             });
         } else {
             roles.add(Role.ROLE_USER);
         }
-
-        User user = User.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword()))
-                .roles(roles)
-                .createdAt(LocalDateTime.now())
-                .build();
-
+        User user = User.builder().name(dto.getName()).email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword())).roles(roles)
+                .createdAt(LocalDateTime.now()).build();
         return userRepository.save(user);
     }
 
     @Override
     public AuthResponse login(AuthRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
+        // FIXED: Convert Roles to Set properly for the updated JwtProvider
+        String token = jwtProvider.generateToken(user.getEmail(), user.getId(), 
+            user.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        // Passing Set<String> or List<String> now works because the param is Collection<String>
-        String token = jwtProvider.generateToken(
-                user.getEmail(), 
-                user.getId(),
-                user.getRoles().stream().map(Enum::name).collect(Collectors.toList())
-        );
-
-        return AuthResponse.builder()
-                .token(token)
-                .userId(user.getId())
-                .email(user.getEmail())
-                .roles(user.getRoles().stream().map(Enum::name).collect(Collectors.toSet()))
-                .build();
+        return AuthResponse.builder().token(token).userId(user.getId()).email(user.getEmail())
+                .roles(user.getRoles().stream().map(Enum::name).collect(Collectors.toSet())).build();
     }
 
     @Override
     public User getByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }
