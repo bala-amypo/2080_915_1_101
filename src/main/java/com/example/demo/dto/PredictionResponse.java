@@ -1,12 +1,20 @@
 package com.example.demo.dto;
 
+import java.time.LocalDate;
+
 public class PredictionResponse {
 
-    private String message;
+    private LocalDate predictedRestockDate;
 
-    public PredictionResponse(String message) {
-        this.message = message;
+    public PredictionResponse(LocalDate predictedRestockDate) {
+        this.predictedRestockDate = predictedRestockDate;
     }
 
-    public String getMessage() { return message; }
+    public LocalDate getPredictedRestockDate() {
+        return predictedRestockDate;
+    }
+
+    public void setPredictedRestockDate(LocalDate predictedRestockDate) {
+        this.predictedRestockDate = predictedRestockDate;
+    }
 }

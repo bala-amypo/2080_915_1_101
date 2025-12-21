@@ -1,14 +1,38 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.*;
-import com.example.demo.model.*;
-import com.example.demo.service.*;
+import com.example.demo.dto.PredictionResponse;
+import com.example.demo.model.PredictionRule;
+import com.example.demo.service.PredictionService;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/predict")
 public class PredictionController {
-    private final PredictionService service;
-    public PredictionController(PredictionService service){ this.service = service; }
-    @GetMapping public PredictionResponse predict(){ return service.predict(); }
+
+    private final PredictionService predictionService;
+
+    public PredictionController(PredictionService predictionService) {
+        this.predictionService = predictionService;
+    }
+
+    @GetMapping("/restock-date/{stockRecordId}")
+    public PredictionResponse predict(@PathVariable Long stockRecordId) {
+
+        LocalDate date = predictionService.predictRestockDate(stockRecordId);
+
+        return new PredictionResponse(date);
+    }
+
+    @PostMapping("/rules")
+    public PredictionRule createRule(@RequestBody PredictionRule rule) {
+        return predictionService.createRule(rule);
+    }
+
+    @GetMapping("/rules")
+    public List<PredictionRule> getRules() {
+        return predictionService.getAllRules();
+    }
 }
