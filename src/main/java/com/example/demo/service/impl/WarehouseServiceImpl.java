@@ -20,6 +20,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public Warehouse createWarehouse(Warehouse warehouse) {
+
         if (warehouse.getLocation() == null || warehouse.getLocation().isBlank()) {
             throw new IllegalArgumentException("location cannot be empty");
         }
@@ -33,6 +34,11 @@ public class WarehouseServiceImpl implements WarehouseService {
         return warehouseRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Warehouse not found"));
+    }
+
+    @Override
+    public Warehouse getWarehouse(String id) {
+        return getWarehouse(Long.parseLong(id));
     }
 
     @Override

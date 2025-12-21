@@ -10,5 +10,7 @@ public interface WarehouseService {
 
     Warehouse getWarehouse(Long id);
 
+    Warehouse getWarehouse(String id);
+
     List<Warehouse> getAllWarehouses();
 }
