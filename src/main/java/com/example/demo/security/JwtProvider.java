@@ -3,12 +3,14 @@ package com.example.demo.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
 
-@Component // [cite: 297]
+@Component
 public class JwtProvider {
+    // Note: In production, use a secure key from properties [cite: 298]
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long jwtExpirationMs = 86400000;
 
@@ -27,12 +29,17 @@ public class JwtProvider {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false; // [cite: 299]
         }
     }
 
     public String getEmailFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 }
