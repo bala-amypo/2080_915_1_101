@@ -15,8 +15,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service [cite: 149]
-@RequiredArgsConstructor [cite: 150]
+@Service
+@RequiredArgsConstructor
 public class PredictionServiceImpl implements PredictionService {
 
     private final PredictionRuleRepository ruleRepo;
@@ -25,48 +25,51 @@ public class PredictionServiceImpl implements PredictionService {
 
     @Override
     public PredictionRule createRule(PredictionRule rule) {
-        // Validation: averageDaysWindow must be greater than zero [cite: 70, 202]
+        // Rule: averageDaysWindow must be greater than zero [cite: 70, 202]
         if (rule.getAverageDaysWindow() <= 0) {
-            throw new IllegalArgumentException("averageDaysWindow must be greater than zero"); [cite: 70, 202]
+            throw new IllegalArgumentException("averageDaysWindow must be greater than zero");
         }
-        // Validation: minDailyUsage must be less than or equal to maxDailyUsage [cite: 70, 202]
+        
+        // Rule: minDailyUsage must be less than or equal to maxDailyUsage [cite: 70, 202]
         if (rule.getMinDailyUsage() > rule.getMaxDailyUsage()) {
-            throw new IllegalArgumentException("minDailyUsage must be less than or equal to maxDailyUsage"); [cite: 70, 202]
+            throw new IllegalArgumentException("minDailyUsage must be less than or equal to maxDailyUsage");
         }
-        // Check for unique rule name [cite: 71, 202]
+        
+        // Rule: ruleName must be unique [cite: 71, 202]
         if (ruleRepo.findByRuleName(rule.getRuleName()).isPresent()) {
-            throw new IllegalArgumentException("Rule name must be unique"); [cite: 71, 202]
+            throw new IllegalArgumentException("Rule name must be unique");
         }
 
-        rule.setCreatedAt(LocalDateTime.now()); [cite: 69, 203]
-        return ruleRepo.save(rule); [cite: 203]
+        // Set creation timestamp [cite: 69, 203]
+        rule.setCreatedAt(LocalDateTime.now());
+        return ruleRepo.save(rule);
     }
 
     @Override
     public List<PredictionRule> getAllRules() {
-        return ruleRepo.findAll(); [cite: 204]
+        // Returns all prediction rules [cite: 204]
+        return ruleRepo.findAll();
     }
 
     @Override
     public LocalDate predictRestockDate(Long stockRecordId) {
-        // Load stock record or throw ResourceNotFoundException [cite: 198, 207]
+        // Load stock record or throw ResourceNotFoundException 
         StockRecord record = stockRepo.findById(stockRecordId)
-                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found")); [cite: 181, 207]
+                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
 
-        // Load consumption logs for the record 
-        List<ConsumptionLog> logs = logRepo.findByStockRecordId(stockRecordId); [cite: 121]
+        // Load consumption logs for this record [cite: 205]
+        List<ConsumptionLog> logs = logRepo.findByStockRecordId(stockRecordId);
 
-        // Compute average daily usage over the window defined in rules 
-        // Using an explicit lambda to avoid method reference errors
+        // Calculate average daily usage [cite: 205]
         double avgUsage = logs.stream()
-                .mapToInt(log -> log.getConsumedQuantity()) [cite: 56]
+                .mapToInt(log -> log.getConsumedQuantity())
                 .average()
-                .orElse(1.0); // Default to 1 to prevent division by zero
+                .orElse(1.0); // Avoid division by zero
 
-        // Calculate days remaining until quantity drops to reorder threshold 
-        long daysRemaining = (long) ((record.getCurrentQuantity() - record.getReorderThreshold()) / avgUsage); [cite: 46, 48, 205]
+        // Calculate days remaining until quantity drops to the reorder threshold [cite: 205]
+        long daysRemaining = (long) ((record.getCurrentQuantity() - record.getReorderThreshold()) / avgUsage);
 
         // Return the predicted restock date [cite: 206]
-        return LocalDate.now().plusDays(Math.max(0, daysRemaining)); [cite: 206]
+        return LocalDate.now().plusDays(Math.max(0, daysRemaining));
     }
 }
