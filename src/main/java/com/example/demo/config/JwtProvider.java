@@ -9,9 +9,8 @@ import java.util.List;
 
 @Component
 public class JwtProvider {
-    // Generate a secure key for HS256
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long jwtExpirationDate = 3600000; // 1 hour
+    private final long jwtExpirationDate = 3600000;
 
     public String generateToken(String email, Long userId, List<String> roles) {
         return Jwts.builder()
