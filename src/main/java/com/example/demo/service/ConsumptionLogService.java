@@ -1,22 +1,12 @@
-package com.example.demo.model;
+package com.example.demo.service;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
+import com.example.demo.model.ConsumptionLog;
+import java.util.List;
 
-@Entity
-@Data // This generates all getters and setters
-@NoArgsConstructor
-@AllArgsConstructor
-public class ConsumptionLog {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private Integer consumedQuantity;
-    private LocalDateTime consumedDate;
-
-    @ManyToOne
-    @JoinColumn(name = "stock_record_id")
-    private StockRecord stockRecord;
+public interface ConsumptionLogService {
+    ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log);
+    List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId);
+    
+    // This fixes BOTH remaining errors
+    ConsumptionLog getLog(Long id); 
 }
