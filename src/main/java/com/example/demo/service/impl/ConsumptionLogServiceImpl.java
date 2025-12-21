@@ -21,7 +21,7 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
                 .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found")); // [cite: 190]
         
         if (log.getConsumedQuantity() <= 0) throw new IllegalArgumentException("consumedQuantity > 0"); // [cite: 191]
-        if (log.getConsumedDate().isAfter(LocalDate.now())) 
+        log.setConsumedDate(java.time.LocalDateTime.now()); // CORRECT 
             throw new IllegalArgumentException("consumedDate cannot be future"); // [cite: 192]
 
         log.setStockRecord(record); // [cite: 193]
