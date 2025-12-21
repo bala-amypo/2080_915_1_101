@@ -3,9 +3,9 @@ package com.example.demo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication // [cite: 3, 4]
-public class DemoApplication {
+@SpringBootApplication
+public class InventoryApplication { // Must match the filename
     public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
+        SpringApplication.run(InventoryApplication.class, args);
     }
 }
