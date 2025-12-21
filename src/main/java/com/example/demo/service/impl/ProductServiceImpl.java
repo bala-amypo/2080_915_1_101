@@ -20,6 +20,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product createProduct(Product product) {
+
         if (product.getProductName() == null || product.getProductName().isBlank()) {
             throw new IllegalArgumentException("productName cannot be empty");
         }
@@ -38,6 +39,11 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Product not found"));
+    }
+
+    @Override
+    public Product getProduct(String id) {
+        return getProduct(Long.parseLong(id));
     }
 
     @Override

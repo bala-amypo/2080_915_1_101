@@ -10,5 +10,7 @@ public interface ProductService {
 
     Product getProduct(Long id);
 
+    Product getProduct(String id);
+
     List<Product> getAllProducts();
 }
