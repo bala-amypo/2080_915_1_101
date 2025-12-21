@@ -18,25 +18,25 @@ public class StockRecordController {
 
     @PostMapping("/{productId}/{warehouseId}")
     public StockRecord createStockRecord(
-            @PathVariable Long productId,
-            @PathVariable Long warehouseId,
+            @PathVariable String productId,
+            @PathVariable String warehouseId,
             @RequestBody StockRecord record) {
 
         return stockRecordService.createStockRecord(productId, warehouseId, record);
     }
 
     @GetMapping("/{id}")
-    public StockRecord getStockRecord(@PathVariable Long id) {
+    public StockRecord getStockRecord(@PathVariable String id) {
         return stockRecordService.getStockRecord(id);
     }
 
     @GetMapping("/product/{productId}")
-    public List<StockRecord> getByProduct(@PathVariable Long productId) {
+    public List<StockRecord> getByProduct(@PathVariable String productId) {
         return stockRecordService.getRecordsBy_product(productId);
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public List<StockRecord> getByWarehouse(@PathVariable Long warehouseId) {
+    public List<StockRecord> getByWarehouse(@PathVariable String warehouseId) {
         return stockRecordService.getRecordsByWarehouse(warehouseId);
     }
 }
