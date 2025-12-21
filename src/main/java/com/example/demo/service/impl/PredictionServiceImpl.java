@@ -35,7 +35,7 @@ public class PredictionServiceImpl implements PredictionService {
         StockRecord stockRecord = stockRecordRepository.findById(stockRecordId)
                 .orElseThrow(() -> new RuntimeException("Stock record not found"));
 
-        // ✅ FIXED METHOD NAME
+        // ✅ Correct repository method
         List<ConsumptionLog> logs =
                 consumptionLogRepository.findByStockRecord_Id(stockRecordId);
 
@@ -49,4 +49,10 @@ public class PredictionServiceImpl implements PredictionService {
         boolean reorderRequired =
                 stockRecord.getCurrentQuantity() <= stockRecord.getReorderThreshold();
 
-        return new
+        return new PredictionResponse(
+                stockRecord.getId(),
+                totalConsumed,
+                reorderRequired
+        );
+    }
+}

@@ -1,61 +1,12 @@
-package com.example.demo.model;
+package com.example.demo.service;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import com.example.demo.model.ConsumptionLog;
 
-@Entity
-@Table(name = "consumption_logs")
-public class ConsumptionLog {
+import java.util.List;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public interface ConsumptionLogService {
 
-    // ✅ Relationship with StockRecord
-    @ManyToOne
-    @JoinColumn(name = "stock_record_id", nullable = false)
-    private StockRecord stockRecord;
+    ConsumptionLog saveLog(ConsumptionLog log);
 
-    @Column(nullable = false)
-    private int quantityUsed;
-
-    @Column(nullable = false)
-    private LocalDateTime consumedAt;
-
-    public ConsumptionLog() {
-    }
-
-    public ConsumptionLog(StockRecord stockRecord, int quantityUsed, LocalDateTime consumedAt) {
-        this.stockRecord = stockRecord;
-        this.quantityUsed = quantityUsed;
-        this.consumedAt = consumedAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public StockRecord getStockRecord() {
-        return stockRecord;
-    }
-
-    public void setStockRecord(StockRecord stockRecord) {
-        this.stockRecord = stockRecord;
-    }
-
-    public int getQuantityUsed() {
-        return quantityUsed;
-    }
-
-    public void setQuantityUsed(int quantityUsed) {
-        this.quantityUsed = quantityUsed;
-    }
-
-    public LocalDateTime getConsumedAt() {
-        return consumedAt;
-    }
-
-    public void setConsumedAt(LocalDateTime consumedAt) {
-        this.consumedAt = consumedAt;
-    }
+    List<ConsumptionLog> getLogsByStockRecordId(Long stockRecordId);
 }

@@ -1,20 +1,26 @@
 package com.example.demo.dto;
 
-import java.time.LocalDate;
-
 public class PredictionResponse {
 
-    private LocalDate predictedRestockDate;
+    private Long stockRecordId;
+    private int totalConsumed;
+    private boolean reorderRequired;
 
-    public PredictionResponse(LocalDate predictedRestockDate) {
-        this.predictedRestockDate = predictedRestockDate;
+    public PredictionResponse(Long stockRecordId, int totalConsumed, boolean reorderRequired) {
+        this.stockRecordId = stockRecordId;
+        this.totalConsumed = totalConsumed;
+        this.reorderRequired = reorderRequired;
     }
 
-    public LocalDate getPredictedRestockDate() {
-        return predictedRestockDate;
+    public Long getStockRecordId() {
+        return stockRecordId;
     }
 
-    public void setPredictedRestockDate(LocalDate predictedRestockDate) {
-        this.predictedRestockDate = predictedRestockDate;
+    public int getTotalConsumed() {
+        return totalConsumed;
+    }
+
+    public boolean isReorderRequired() {
+        return reorderRequired;
     }
 }

@@ -1,14 +1,28 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
-import com.example.demo.service.*;
+import com.example.demo.model.ConsumptionLog;
+import com.example.demo.repository.ConsumptionLogRepository;
+import com.example.demo.service.ConsumptionLogService;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+
 @Service
 public class ConsumptionLogServiceImpl implements ConsumptionLogService {
-    private final ConsumptionLogRepository repo;
-    public ConsumptionLogServiceImpl(ConsumptionLogRepository repo) { this.repo = repo; }
-    public ConsumptionLog save(ConsumptionLog c) { return repo.save(c); }
-    public List<ConsumptionLog> getAll() { return repo.findAll(); }
+
+    private final ConsumptionLogRepository consumptionLogRepository;
+
+    public ConsumptionLogServiceImpl(ConsumptionLogRepository consumptionLogRepository) {
+        this.consumptionLogRepository = consumptionLogRepository;
+    }
+
+    @Override
+    public ConsumptionLog saveLog(ConsumptionLog log) {
+        return consumptionLogRepository.save(log);
+    }
+
+    @Override
+    public List<ConsumptionLog> getLogsByStockRecordId(Long stockRecordId) {
+        return consumptionLogRepository.findByStockRecord_Id(stockRecordId);
+    }
 }
