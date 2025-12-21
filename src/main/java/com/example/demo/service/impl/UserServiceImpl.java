@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.config.JwtProvider; // UPDATED IMPORT
+import com.example.demo.config.JwtProvider;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.UserRegisterDto;
@@ -69,8 +69,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        String token = jwtProvider.generateToken(user.getEmail(), user.getId(),
-                user.getRoles().stream().map(Enum::name).collect(Collectors.toList()));
+        // Passing Set<String> or List<String> now works because the param is Collection<String>
+        String token = jwtProvider.generateToken(
+                user.getEmail(), 
+                user.getId(),
+                user.getRoles().stream().map(Enum::name).collect(Collectors.toList())
+        );
 
         return AuthResponse.builder()
                 .token(token)
