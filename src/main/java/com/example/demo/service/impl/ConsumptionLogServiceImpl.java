@@ -24,7 +24,7 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
         this.stockRecordRepository = stockRecordRepository;
     }
 
-    /* ===== CORE (Long) METHODS ===== */
+    /* ===== Long-based ===== */
 
     @Override
     public ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log) {
@@ -55,7 +55,7 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
                 .orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found"));
     }
 
-    /* ===== STRING OVERLOADS (FOR TESTS & CONTROLLERS) ===== */
+    /* ===== String-based ===== */
 
     @Override
     public ConsumptionLog logConsumption(String stockRecordId, ConsumptionLog log) {
