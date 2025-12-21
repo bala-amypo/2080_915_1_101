@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 public class PredictionRule {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String ruleName;        // Matches getRuleName()
-    private Integer averageDaysWindow; // Matches getAverageDaysWindow()
-    private Double minDailyUsage;   // Matches getMinDailyUsage()
-    private Double maxDailyUsage;   // Matches getMaxDailyUsage()
+    private String ruleName;
+    private Integer averageDaysWindow;
+    private Double minDailyUsage;
+    private Double maxDailyUsage;
     private LocalDateTime createdAt;
 }

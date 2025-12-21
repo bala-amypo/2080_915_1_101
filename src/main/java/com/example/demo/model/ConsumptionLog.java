@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 public class ConsumptionLog {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer consumedQuantity; // Matches getConsumedQuantity()
-    private LocalDateTime consumedDate; // Matches getConsumedDate()
+    private Integer consumedQuantity;
+    private LocalDateTime consumedDate;
 
     @ManyToOne
-    private StockRecord stockRecord; // Matches setStockRecord()
+    private StockRecord stockRecord;
 }

@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 public class Product {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String productName; // Matches getProductName()
-    private String sku;         // Matches getSku()
+    private String productName;
+    private String sku;
+    private Double price;
     private LocalDateTime createdAt;
 }
