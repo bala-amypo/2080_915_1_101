@@ -1,14 +1,13 @@
 package com.example.demo.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data 
-@Builder // Fixes AuthResponse.builder() in UserServiceImpl
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class AuthResponse {
     private String token;
-    private Long userId;
-    private String email;
-    private java.util.Set<String> roles;
+    private String username;
 }
