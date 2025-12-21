@@ -18,7 +18,7 @@ public class ProductController {
 
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
-        return productService.saveProduct(product);
+        return productService.createProduct(product);
     }
 
     @GetMapping
@@ -26,9 +26,8 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/sku/{sku}")
-    public Product getBySku(@PathVariable String sku) {
-        return productService.getBySku(sku)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+    @GetMapping("/{id}")
+    public Product getProduct(@PathVariable Long id) {
+        return productService.getProduct(id);
     }
 }

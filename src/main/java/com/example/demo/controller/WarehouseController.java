@@ -18,7 +18,7 @@ public class WarehouseController {
 
     @PostMapping
     public Warehouse createWarehouse(@RequestBody Warehouse warehouse) {
-        return warehouseService.saveWarehouse(warehouse);
+        return warehouseService.createWarehouse(warehouse);
     }
 
     @GetMapping
@@ -26,9 +26,8 @@ public class WarehouseController {
         return warehouseService.getAllWarehouses();
     }
 
-    @GetMapping("/{name}")
-    public Warehouse getByName(@PathVariable String name) {
-        return warehouseService.getByWarehouseName(name)
-                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
+    @GetMapping("/{id}")
+    public Warehouse getWarehouse(@PathVariable Long id) {
+        return warehouseService.getWarehouse(id);
     }
 }

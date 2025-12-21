@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/prediction")
+@RequestMapping("/api/predict")
 public class PredictionController {
 
     private final PredictionService predictionService;
@@ -17,9 +17,12 @@ public class PredictionController {
         this.predictionService = predictionService;
     }
 
-    @GetMapping("/{stockId}")
-    public PredictionResponse predict(@PathVariable Long stockId) {
-        return predictionService.predict(stockId);
+    @GetMapping("/restock-date/{stockRecordId}")
+    public PredictionResponse predictRestockDate(
+            @PathVariable Long stockRecordId) {
+
+        return new PredictionResponse(
+                predictionService.predictRestockDate(stockRecordId));
     }
 
     @PostMapping("/rules")

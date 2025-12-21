@@ -16,13 +16,23 @@ public class ConsumptionLogController {
         this.consumptionLogService = consumptionLogService;
     }
 
-    @PostMapping
-    public ConsumptionLog createLog(@RequestBody ConsumptionLog log) {
-        return consumptionLogService.saveLog(log);
+    @PostMapping("/{stockRecordId}")
+    public ConsumptionLog logConsumption(
+            @PathVariable Long stockRecordId,
+            @RequestBody ConsumptionLog log) {
+
+        return consumptionLogService.logConsumption(stockRecordId, log);
     }
 
-    @GetMapping("/stock/{stockId}")
-    public List<ConsumptionLog> getLogs(@PathVariable Long stockId) {
-        return consumptionLogService.getLogsByStockRecordId(stockId);
+    @GetMapping("/record/{stockRecordId}")
+    public List<ConsumptionLog> getLogsByStockRecord(
+            @PathVariable Long stockRecordId) {
+
+        return consumptionLogService.getLogsByStockRecord(stockRecordId);
+    }
+
+    @GetMapping("/{id}")
+    public ConsumptionLog getLog(@PathVariable Long id) {
+        return consumptionLogService.getLog(id);
     }
 }
