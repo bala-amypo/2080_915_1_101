@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -8,12 +8,11 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class JwtProvider {
+public class JWTProvider {
 
     private final String jwtSecret = "YourSecretKey12345"; // replace with secure key
     private final long jwtExpirationMs = 86400000; // 1 day
 
-    // Generate JWT token
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -23,7 +22,6 @@ public class JwtProvider {
                 .compact();
     }
 
-    // Get username from JWT
     public String getUsernameFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -32,7 +30,6 @@ public class JwtProvider {
                 .getSubject();
     }
 
-    // Validate JWT
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
@@ -42,7 +39,6 @@ public class JwtProvider {
         }
     }
 
-    // Get all claims
     public Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
     }
