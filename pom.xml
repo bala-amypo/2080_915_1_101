@@ -18,8 +18,8 @@
         <java.version>17</java.version>
     </properties>
     <properties>
-    <start-class>com.example.demo.InventoryApplication</start-class>
-</properties>
+        <start-class>com.example.demo.InventoryApplication</start-class>
+    </properties>
 
     <dependencies>
         <dependency>
