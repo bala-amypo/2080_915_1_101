@@ -6,7 +6,7 @@ import com.example.demo.repository.*;
 import com.example.demo.service.ConsumptionLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,23 +18,27 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
     @Override
     public ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log) {
         StockRecord record = stockRepo.findById(stockRecordId)
-                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found")); // [cite: 190]
+                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
         
-        if (log.getConsumedQuantity() <= 0) throw new IllegalArgumentException("consumedQuantity > 0"); // [cite: 191]
-        log.setConsumedDate(java.time.LocalDateTime.now()); // CORRECT 
-            throw new IllegalArgumentException("consumedDate cannot be future"); // [cite: 192]
+        if (log.getConsumedQuantity() == null || log.getConsumedQuantity() <= 0) {
+            throw new IllegalArgumentException("consumedQuantity must be greater than 0");
+        }
 
-        log.setStockRecord(record); // [cite: 193]
+        // Set the date and the relationship
+        log.setConsumedDate(LocalDateTime.now()); 
+        log.setStockRecord(record); 
+
         return repository.save(log);
     }
 
     @Override
     public List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId) {
-        return repository.findByStockRecordId(stockRecordId); // [cite: 194]
+        return repository.findByStockRecordId(stockRecordId);
     }
 
     @Override
     public ConsumptionLog getLog(Long id) {
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found")); // [cite: 195]
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found"));
     }
 }

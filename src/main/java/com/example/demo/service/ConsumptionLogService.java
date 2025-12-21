@@ -1,21 +1,22 @@
-package com.example.demo.service;
+package com.example.demo.model;
 
-import com.example.demo.model.ConsumptionLog;
-import java.util.List;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
 
-public interface ConsumptionLogService {
-    /**
-     * Logs product consumption and validates that the date is not in the future[cite: 191, 192].
-     */
-    ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log);
+@Entity
+@Data // This generates all getters and setters
+@NoArgsConstructor
+@AllArgsConstructor
+public class ConsumptionLog {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    /**
-     * Returns all consumption logs for a specific stock record[cite: 194].
-     */
-    List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId);
+    private Integer consumedQuantity;
+    private LocalDateTime consumedDate;
 
-    /**
-     * Retrieves a single consumption log entry by ID[cite: 195].
-     */
-    ConsumptionLog getLog(Long id);
+    @ManyToOne
+    @JoinColumn(name = "stock_record_id")
+    private StockRecord stockRecord;
 }
