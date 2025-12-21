@@ -1,12 +1,13 @@
 package com.example.demo.dto;
 
-import lombok.Data;
-import java.util.Set;
+import lombok.*;
 
-@Data // [cite: 98]
+@Data // Fixes getName, getEmail, getPassword, getRoles in UserServiceImpl
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRegisterDto {
-    private String name; // [cite: 100]
-    private String email; // [cite: 101]
-    private String password; // [cite: 102]
-    private Set<String> roles; // [cite: 103]
+    private String name;
+    private String email;
+    private String password;
+    private java.util.Set<String> roles;
 }
