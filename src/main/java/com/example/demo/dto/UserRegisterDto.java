@@ -1,10 +1,10 @@
 package com.example.demo.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
-@Data // This generates getUsername(), getEmail(), getPassword()
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRegisterDto {

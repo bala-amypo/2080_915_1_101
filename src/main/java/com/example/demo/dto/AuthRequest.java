@@ -1,13 +1,13 @@
 package com.example.demo.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
-@Data // This generates getUsername() and getPassword()
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDto {
+public class AuthRequest {
     private String username;
     private String password;
 }
