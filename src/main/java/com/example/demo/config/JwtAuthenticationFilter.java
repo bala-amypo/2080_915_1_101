@@ -1,7 +1,7 @@
 package com.example.demo.config;
 
 import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,33 +12,29 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends GenericFilter {
 
-    private final JWTProvider jwtProvider;
-    private final UserDetailsService userDetailsService;
+    private final JwtProvider jwtProvider;
+    private final UserDetailsService uds;
 
-    public JwtAuthenticationFilter(JWTProvider jwtProvider,
-                                   UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtProvider jwtProvider, UserDetailsService uds) {
         this.jwtProvider = jwtProvider;
-        this.userDetailsService = userDetailsService;
+        this.uds = uds;
     }
 
     @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain)
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest req = (HttpServletRequest) request;
-        String header = req.getHeader("Authorization");
+        HttpServletRequest request = (HttpServletRequest) req;
+        String auth = request.getHeader("Authorization");
 
-        if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
+        if (auth != null && auth.startsWith("Bearer ")) {
+            String token = auth.substring(7);
             String username = jwtProvider.getUsername(token);
-
-            var userDetails = userDetailsService.loadUserByUsername(username);
-            var auth = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            var user = uds.loadUserByUsername(username);
+            var authentication =
+                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-        chain.doFilter(request, response);
+        chain.doFilter(req, res);
     }
 }
