@@ -54,6 +54,11 @@ public class PredictionServiceImpl implements PredictionService {
     public List<PredictionRule> getAllRules() {
         return ruleRepository.findAll();
     }
+    @Override
+public LocalDate predictRestockDate(String stockRecordId) {
+    return predictRestockDate(Long.parseLong(stockRecordId));
+}
+
 
     @Override
     public LocalDate predictRestockDate(Long stockRecordId) {

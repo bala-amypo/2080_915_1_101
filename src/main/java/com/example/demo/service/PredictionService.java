@@ -8,6 +8,7 @@ import java.util.List;
 public interface PredictionService {
 
     LocalDate predictRestockDate(Long stockRecordId);
+    LocalDate predictRestockDate(String stockRecordId);
 
     PredictionRule createRule(PredictionRule rule);
 
