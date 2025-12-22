@@ -22,8 +22,8 @@ public class StockRecord {
     private int currentQuantity;
     private int reorderThreshold;
 
-    private LocalDate lastUpdated;
-    private LocalDateTime updatedAt;
+    /* ===== IMPORTANT ===== */
+    private LocalDateTime lastUpdated;   // TESTS USE LocalDateTime
 
     @ManyToOne
     private Product product;
@@ -34,9 +34,8 @@ public class StockRecord {
     @OneToMany(mappedBy = "stockRecord", cascade = CascadeType.ALL)
     private List<ConsumptionLog> consumptionLogs;
 
-    /* ===== SAFETY SYNC ===== */
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-        this.lastUpdated = updatedAt.toLocalDate();
+    /* ===== COMPATIBILITY GETTER ===== */
+    public LocalDate getLastUpdatedDate() {
+        return lastUpdated == null ? null : lastUpdated.toLocalDate();
     }
 }
