@@ -6,30 +6,42 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository repository;
+    private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository repository) {
-        this.repository = repository;
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Override
-    public Product getProduct(String id) {
-        return getProduct(Long.parseLong(id));
+    public Product createProduct(Product product) {
+        if (product.getProductName() == null || product.getProductName().isBlank()) {
+            throw new IllegalArgumentException("productName cannot be empty");
+        }
+
+        productRepository.findBySku(product.getSku())
+                .ifPresent(p -> {
+                    throw new IllegalArgumentException("sku already exists");
+                });
+
+        product.setCreatedAt(LocalDateTime.now());
+        return productRepository.save(product);
     }
 
     @Override
-    public Product getProduct(long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    public Product getProduct(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Product not found"));
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return repository.findAll();
+        return productRepository.findAll();
     }
 }
