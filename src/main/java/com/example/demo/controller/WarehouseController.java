@@ -10,22 +10,24 @@ import java.util.List;
 @RequestMapping("/api/warehouses")
 public class WarehouseController {
 
-    private final WarehouseService service;
+    private final WarehouseService warehouseService;
 
-    public WarehouseController(WarehouseService service) {
-        this.service = service;
+    public WarehouseController(WarehouseService warehouseService) {
+        this.warehouseService = warehouseService;
+    }
+
+    @PostMapping
+    public Warehouse createWarehouse(@RequestBody Warehouse warehouse) {
+        return warehouseService.createWarehouse(warehouse);
+    }
+
+    @GetMapping
+    public List<Warehouse> getAllWarehouses() {
+        return warehouseService.getAllWarehouses();
     }
 
     @GetMapping("/{id}")
-    public Warehouse getWarehouse(@PathVariable String id) {
-        return service.getWarehouse(id);
-    }
-
-    public Warehouse getWarehouse(long id) {
-        return service.getWarehouse(id);
-    }
-
-    public List<Warehouse> getAllWarehouses() {
-        return service.getAllWarehouses();
+    public Warehouse getWarehouse(@PathVariable Long id) {
+        return warehouseService.getWarehouse(id);
     }
 }

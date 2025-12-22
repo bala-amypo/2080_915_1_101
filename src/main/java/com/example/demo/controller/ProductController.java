@@ -10,24 +10,24 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductService productService;
 
-    public ProductController(ProductService service) {
-        this.service = service;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
-    /* ===== REST ===== */
-    @GetMapping("/{id}")
-    public Product getProduct(@PathVariable String id) {
-        return service.getProduct(id);
+    @PostMapping
+    public Product createProduct(@RequestBody Product product) {
+        return productService.createProduct(product);
     }
 
-    /* ===== TEST SUPPORT ===== */
-    public Product getProduct(long id) {
-        return service.getProduct(id);
-    }
-
+    @GetMapping
     public List<Product> getAllProducts() {
-        return service.getAllProducts();
+        return productService.getAllProducts();
+    }
+
+    @GetMapping("/{id}")
+    public Product getProduct(@PathVariable Long id) {
+        return productService.getProduct(id);
     }
 }
