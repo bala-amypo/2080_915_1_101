@@ -11,12 +11,55 @@ public class Product {
     private Long id;
 
     @NotBlank
-    private String name;
+    private String productName;
+
+    @NotBlank
+    private String sku;
 
     @NotBlank
     private String category;
 
     public Product() {}
+
+    /* =======================
+       BUILDER SUPPORT (TESTS)
+       ======================= */
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private final Product product = new Product();
+
+        public Builder id(Long id) {
+            product.setId(id);
+            return this;
+        }
+
+        public Builder productName(String productName) {
+            product.setProductName(productName);
+            return this;
+        }
+
+        public Builder sku(String sku) {
+            product.setSku(sku);
+            return this;
+        }
+
+        public Builder category(String category) {
+            product.setCategory(category);
+            return this;
+        }
+
+        public Product build() {
+            return product;
+        }
+    }
+
+    /* =======================
+       GETTERS & SETTERS
+       ======================= */
 
     public Long getId() {
         return id;
@@ -26,12 +69,20 @@ public class Product {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
     public String getCategory() {
