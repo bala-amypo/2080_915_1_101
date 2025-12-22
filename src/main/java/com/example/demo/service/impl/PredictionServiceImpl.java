@@ -8,74 +8,75 @@ import com.example.demo.repository.ConsumptionLogRepository;
 import com.example.demo.repository.PredictionRuleRepository;
 import com.example.demo.repository.StockRecordRepository;
 import com.example.demo.service.PredictionService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class PredictionServiceImpl implements PredictionService {
+
+    private final PredictionRuleRepository ruleRepository;
     private final StockRecordRepository stockRecordRepository;
-    private final ConsumptionLogRepository consumptionLogRepository;
-    private final PredictionRuleRepository predictionRuleRepository;
+    private final ConsumptionLogRepository logRepository;
+
+    public PredictionServiceImpl(
+            PredictionRuleRepository ruleRepository,
+            StockRecordRepository stockRecordRepository,
+            ConsumptionLogRepository logRepository) {
+
+        this.ruleRepository = ruleRepository;
+        this.stockRecordRepository = stockRecordRepository;
+        this.logRepository = logRepository;
+    }
 
     @Override
     public PredictionRule createRule(PredictionRule rule) {
+
         if (rule.getAverageDaysWindow() <= 0) {
-            throw new IllegalArgumentException("Window must be > 0");
+            throw new IllegalArgumentException("averageDaysWindow must be > 0");
         }
         if (rule.getMinDailyUsage() > rule.getMaxDailyUsage()) {
-            throw new IllegalArgumentException("Min cannot be > Max");
-        }
-        if (predictionRuleRepository.findByRuleName(rule.getRuleName()).isPresent()) {
-            throw new IllegalArgumentException("Rule name must be unique");
+            throw new IllegalArgumentException("minDailyUsage must be <= maxDailyUsage");
         }
 
+        ruleRepository.findByRuleName(rule.getRuleName())
+                .ifPresent(r -> {
+                    throw new IllegalArgumentException("ruleName already exists");
+                });
+
         rule.setCreatedAt(LocalDateTime.now());
-        return predictionRuleRepository.save(rule);
+        return ruleRepository.save(rule);
     }
 
     @Override
     public List<PredictionRule> getAllRules() {
-        return predictionRuleRepository.findAll();
+        return ruleRepository.findAll();
     }
 
     @Override
     public LocalDate predictRestockDate(Long stockRecordId) {
+
         StockRecord record = stockRecordRepository.findById(stockRecordId)
-                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("StockRecord not found"));
 
-        int windowDays = 30;
-        List<PredictionRule> rules = predictionRuleRepository.findAll();
-        if (!rules.isEmpty()) {
-            windowDays = rules.get(0).getAverageDaysWindow();
-        }
+        List<ConsumptionLog> logs =
+                logRepository.findByStockRecordId(stockRecordId);
 
-        LocalDate cutoffDate = LocalDate.now().minusDays(windowDays);
-        List<ConsumptionLog> logs = consumptionLogRepository.findByStockRecordId(stockRecordId);
-
-        double totalConsumed = logs.stream()
-                .filter(l -> !l.getConsumedDate().isBefore(cutoffDate))
-                .mapToInt(ConsumptionLog::getConsumedQuantity)
-                .sum();
-
-        double avgDailyUsage = totalConsumed / windowDays;
-
-        if (avgDailyUsage == 0) {
-            return LocalDate.now().plusYears(1);
-        }
-
-        int currentQty = record.getCurrentQuantity();
-        int threshold = record.getReorderThreshold();
-
-        double daysRemaining = (currentQty - threshold) / avgDailyUsage;
-
-        if (daysRemaining < 0) {
+        if (logs.isEmpty()) {
             return LocalDate.now();
         }
 
-        return LocalDate.now().plusDays((long) daysRemaining);
+        double avgDailyUsage =
+                logs.stream().mapToInt(ConsumptionLog::getConsumedQuantity).average().orElse(0);
+
+        int remaining =
+                record.getCurrentQuantity() - record.getReorderThreshold();
+
+        int days = avgDailyUsage == 0 ? 0 : (int) Math.ceil(remaining / avgDailyUsage);
+
+        return LocalDate.now().plusDays(Math.max(days, 0));
     }
 }
