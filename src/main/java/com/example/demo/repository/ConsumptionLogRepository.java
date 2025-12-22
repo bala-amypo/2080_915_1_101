@@ -9,6 +9,10 @@ import java.util.List;
 public interface ConsumptionLogRepository
         extends JpaRepository<ConsumptionLog, Long> {
 
+    // Used by services + tests
+    List<ConsumptionLog> findByStockRecordId(Long stockRecordId);
+
+    // Used by tests
     List<ConsumptionLog>
     findByStockRecordIdAndConsumedDateBetween(
             long stockRecordId,
@@ -16,6 +20,7 @@ public interface ConsumptionLogRepository
             LocalDate end
     );
 
+    // Used by tests
     List<ConsumptionLog>
     findByStockRecordIdOrderByConsumedDateDesc(long stockRecordId);
 }
