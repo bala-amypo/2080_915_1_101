@@ -10,8 +10,8 @@ import java.util.Date;
 @Component
 public class JwtProvider {
 
-    private final String SECRET_KEY = "secretkey123";
-    private final long EXPIRATION_TIME = 86400000; // 1 day
+    private static final String SECRET_KEY = "secretkey123";
+    private static final long EXPIRATION_TIME = 86400000; // 1 day
 
     public String generateToken(String email) {
         return Jwts.builder()
