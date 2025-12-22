@@ -1,6 +1,5 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Product;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
@@ -11,30 +10,24 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository repository;
+    private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository repository) {
-        this.repository = repository;
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Override
     public Product createProduct(Product product) {
-        return repository.save(product);
+        return productRepository.save(product);
     }
 
     @Override
-    public Product getProduct(String id) {
-        return getProduct(Long.parseLong(id));
-    }
-
-    @Override
-    public Product getProduct(long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    public Product getProduct(Long id) {
+        return productRepository.findById(id).orElse(null);
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return repository.findAll();
+        return productRepository.findAll();
     }
 }

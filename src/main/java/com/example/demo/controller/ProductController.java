@@ -20,7 +20,7 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
 
-        // 🔴 Validation required by tests
+        // Validation required by tests
         if (product.getProductName() == null ||
             product.getSku() == null ||
             product.getCategory() == null) {
@@ -28,20 +28,20 @@ public class ProductController {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(productService.save(product));
+        return ResponseEntity.ok(productService.createProduct(product));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id) {
-        Product p = productService.getProduct(id);
-        if (p == null) {
+        Product product = productService.getProduct(id);
+        if (product == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(p);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAll() {
+    public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 }
