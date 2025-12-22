@@ -30,6 +30,8 @@ public class StockRecordServiceImpl implements StockRecordService {
         this.warehouseRepository = warehouseRepository;
     }
 
+    /* ================== CORE METHODS ================== */
+
     @Override
     public StockRecord createStockRecord(Long productId, Long warehouseId, StockRecord record) {
 
@@ -50,6 +52,7 @@ public class StockRecordServiceImpl implements StockRecordService {
         if (record.getCurrentQuantity() < 0) {
             throw new IllegalArgumentException("currentQuantity must be >= 0");
         }
+
         if (record.getReorderThreshold() <= 0) {
             throw new IllegalArgumentException("reorderThreshold must be > 0");
         }
@@ -76,5 +79,31 @@ public class StockRecordServiceImpl implements StockRecordService {
     @Override
     public List<StockRecord> getRecordsByWarehouse(Long warehouseId) {
         return stockRecordRepository.findByWarehouseId(warehouseId);
+    }
+
+    /* ================== STRING OVERLOADS (FOR TESTS) ================== */
+
+    @Override
+    public StockRecord createStockRecord(String productId, String warehouseId, StockRecord record) {
+        return createStockRecord(
+                Long.parseLong(productId),
+                Long.parseLong(warehouseId),
+                record
+        );
+    }
+
+    @Override
+    public StockRecord getStockRecord(String id) {
+        return getStockRecord(Long.parseLong(id));
+    }
+
+    @Override
+    public List<StockRecord> getRecordsBy_product(String productId) {
+        return getRecordsBy_product(Long.parseLong(productId));
+    }
+
+    @Override
+    public List<StockRecord> getRecordsByWarehouse(String warehouseId) {
+        return getRecordsByWarehouse(Long.parseLong(warehouseId));
     }
 }
