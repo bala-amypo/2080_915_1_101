@@ -7,8 +7,10 @@ import java.util.List;
 
 public interface PredictionService {
 
-    LocalDate predictRestockDate(Long stockRecordId);
+    /* ===== REQUIRED BY TESTS & CONTROLLER ===== */
+    LocalDate predictRestockDate(String stockRecordId);
 
+    /* ===== RULE MANAGEMENT ===== */
     PredictionRule createRule(PredictionRule rule);
 
     List<PredictionRule> getAllRules();

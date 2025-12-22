@@ -19,7 +19,7 @@ public class PredictionController {
 
     @GetMapping("/restock-date/{stockRecordId}")
     public PredictionResponse predictRestockDate(
-            @PathVariable Long stockRecordId) {
+            @PathVariable String stockRecordId) {
 
         return new PredictionResponse(
                 predictionService.predictRestockDate(stockRecordId));
