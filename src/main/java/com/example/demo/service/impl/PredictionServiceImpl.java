@@ -29,16 +29,21 @@ public class PredictionServiceImpl implements PredictionService {
         this.ruleRepository = ruleRepository;
     }
 
+    /* ===== STRING ===== */
     @Override
     public LocalDate predictRestockDate(String stockRecordId) {
+        return predictRestockDate(Long.parseLong(stockRecordId));
+    }
 
-        Long id = Long.parseLong(stockRecordId);
+    /* ===== LONG ===== */
+    @Override
+    public LocalDate predictRestockDate(long stockRecordId) {
 
-        StockRecord record = stockRecordRepository.findById(id)
+        StockRecord record = stockRecordRepository.findById(stockRecordId)
                 .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
 
         List<ConsumptionLog> logs =
-                consumptionLogRepository.findByStockRecordIdOrderByConsumedDateDesc(id);
+                consumptionLogRepository.findByStockRecordIdOrderByConsumedDateDesc(stockRecordId);
 
         if (logs.isEmpty()) {
             return LocalDate.now().plusDays(30);
@@ -47,11 +52,11 @@ public class PredictionServiceImpl implements PredictionService {
         int avgDailyConsumption =
                 logs.stream().mapToInt(ConsumptionLog::getConsumedQuantity).sum() / logs.size();
 
-        if (avgDailyConsumption == 0) {
+        if (avgDailyConsumption <= 0) {
             return LocalDate.now().plusDays(30);
         }
 
-        int daysLeft = record.getQuantity() / avgDailyConsumption;
+        int daysLeft = record.getCurrentQuantity() / avgDailyConsumption;
 
         return LocalDate.now().plusDays(daysLeft);
     }

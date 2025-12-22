@@ -1,33 +1,35 @@
-package com.example.demo.controller;
+package com.example.demo.service.impl;
 
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Warehouse;
+import com.example.demo.repository.WarehouseRepository;
 import com.example.demo.service.WarehouseService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/warehouses")
-public class WarehouseController {
+@Service
+public class WarehouseServiceImpl implements WarehouseService {
 
-    private final WarehouseService service;
+    private final WarehouseRepository repository;
 
-    public WarehouseController(WarehouseService service) {
-        this.service = service;
+    public WarehouseServiceImpl(WarehouseRepository repository) {
+        this.repository = repository;
     }
 
-    /* ===== REST ===== */
-    @GetMapping("/{id}")
-    public Warehouse getWarehouse(@PathVariable String id) {
-        return service.getWarehouse(id);
+    @Override
+    public Warehouse getWarehouse(String id) {
+        return getWarehouse(Long.parseLong(id));
     }
 
-    /* ===== TEST SUPPORT ===== */
+    @Override
     public Warehouse getWarehouse(long id) {
-        return service.getWarehouse(id);
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
     }
 
+    @Override
     public List<Warehouse> getAllWarehouses() {
-        return service.getAllWarehouses();
+        return repository.findAll();
     }
 }
