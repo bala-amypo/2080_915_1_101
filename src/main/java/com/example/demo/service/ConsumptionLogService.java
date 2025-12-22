@@ -1,14 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.model.ConsumptionLog;
-
 import java.util.List;
 
 public interface ConsumptionLogService {
 
-    ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log);
+    ConsumptionLog logConsumption(String stockRecordId, ConsumptionLog log);
 
-    List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId);
+    List<ConsumptionLog> getLogsByStockRecord(String stockRecordId);
 
-    ConsumptionLog getLog(Long id);
+    ConsumptionLog getLog(String id);
 }

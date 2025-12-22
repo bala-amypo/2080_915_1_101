@@ -18,7 +18,7 @@ public class ConsumptionLogController {
 
     @PostMapping("/{stockRecordId}")
     public ConsumptionLog logConsumption(
-            @PathVariable Long stockRecordId,
+            @PathVariable String stockRecordId,
             @RequestBody ConsumptionLog log) {
 
         return consumptionLogService.logConsumption(stockRecordId, log);
@@ -26,13 +26,13 @@ public class ConsumptionLogController {
 
     @GetMapping("/record/{stockRecordId}")
     public List<ConsumptionLog> getLogsByStockRecord(
-            @PathVariable Long stockRecordId) {
+            @PathVariable String stockRecordId) {
 
         return consumptionLogService.getLogsByStockRecord(stockRecordId);
     }
 
     @GetMapping("/{id}")
-    public ConsumptionLog getLog(@PathVariable Long id) {
+    public ConsumptionLog getLog(@PathVariable String id) {
         return consumptionLogService.getLog(id);
     }
 }

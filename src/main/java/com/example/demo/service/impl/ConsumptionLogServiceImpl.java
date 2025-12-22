@@ -25,11 +25,12 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
     }
 
     @Override
-    public ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log) {
+    public ConsumptionLog logConsumption(String stockRecordId, ConsumptionLog log) {
 
-        StockRecord record = stockRecordRepository.findById(stockRecordId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("StockRecord not found"));
+        Long id = Long.parseLong(stockRecordId);
+
+        StockRecord record = stockRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
 
         if (log.getConsumedQuantity() <= 0) {
             throw new IllegalArgumentException("consumedQuantity must be > 0");
@@ -44,14 +45,13 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
     }
 
     @Override
-    public List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId) {
-        return logRepository.findByStockRecordId(stockRecordId);
+    public List<ConsumptionLog> getLogsByStockRecord(String stockRecordId) {
+        return logRepository.findByStockRecordId(Long.parseLong(stockRecordId));
     }
 
     @Override
-    public ConsumptionLog getLog(Long id) {
-        return logRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("ConsumptionLog not found"));
+    public ConsumptionLog getLog(String id) {
+        return logRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found"));
     }
 }

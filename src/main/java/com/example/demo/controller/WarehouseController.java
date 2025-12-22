@@ -27,7 +27,7 @@ public class WarehouseController {
     }
 
     @GetMapping("/{id}")
-    public Warehouse getWarehouse(@PathVariable Long id) {
+    public Warehouse getWarehouse(@PathVariable String id) {
         return warehouseService.getWarehouse(id);
     }
 }
