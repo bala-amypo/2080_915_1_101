@@ -23,9 +23,9 @@ public class JwtProvider {
     }
 
     public Claims getClaims(String token) {
-        return Jwts.parser()
+        return Jwts.parser()          // ✅ 0.9.x API
                 .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
+                .parseClaimsJws(token) // ✅ exists in 0.9.x
                 .getBody();
     }
 
