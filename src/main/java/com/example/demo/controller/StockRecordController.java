@@ -10,33 +10,38 @@ import java.util.List;
 @RequestMapping("/api/stocks")
 public class StockRecordController {
 
-    private final StockRecordService stockRecordService;
+    private final StockRecordService service;
 
-    public StockRecordController(StockRecordService stockRecordService) {
-        this.stockRecordService = stockRecordService;
+    public StockRecordController(StockRecordService service) {
+        this.service = service;
     }
 
-    @PostMapping("/{productId}/{warehouseId}")
-    public StockRecord createStockRecord(
-            @PathVariable String productId,
-            @PathVariable String warehouseId,
-            @RequestBody StockRecord record) {
-
-        return stockRecordService.createStockRecord(productId, warehouseId, record);
-    }
-
+    /* ===== STRING ===== */
     @GetMapping("/{id}")
     public StockRecord getStockRecord(@PathVariable String id) {
-        return stockRecordService.getStockRecord(id);
+        return service.getStockRecord(id);
     }
 
-    @GetMapping("/product/{productId}")
-    public List<StockRecord> getByProduct(@PathVariable String productId) {
-        return stockRecordService.getRecordsBy_product(productId);
+    /* ===== LONG (REQUIRED BY TESTS) ===== */
+    public StockRecord getStockRecord(long id) {
+        return service.getStockRecord(id);
     }
 
-    @GetMapping("/warehouse/{warehouseId}")
-    public List<StockRecord> getByWarehouse(@PathVariable String warehouseId) {
-        return stockRecordService.getRecordsByWarehouse(warehouseId);
+    /* ===== PRODUCT ===== */
+    public List<StockRecord> getByProduct(long productId) {
+        return service.getRecordsBy_product(productId);
+    }
+
+    public List<StockRecord> getByProduct(String productId) {
+        return service.getRecordsBy_product(productId);
+    }
+
+    /* ===== WAREHOUSE ===== */
+    public List<StockRecord> getByWarehouse(long warehouseId) {
+        return service.getRecordsByWarehouse(warehouseId);
+    }
+
+    public List<StockRecord> getByWarehouse(String warehouseId) {
+        return service.getRecordsByWarehouse(warehouseId);
     }
 }
