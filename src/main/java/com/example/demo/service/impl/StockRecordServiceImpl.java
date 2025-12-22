@@ -6,7 +6,7 @@ import com.example.demo.repository.StockRecordRepository;
 import com.example.demo.service.StockRecordService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,7 +22,7 @@ public class StockRecordServiceImpl implements StockRecordService {
 
     @Override
     public StockRecord createStockRecord(String productId, String warehouseId, StockRecord record) {
-        record.setLastUpdated(LocalDate.now());
+        record.setLastUpdated(LocalDateTime.now());   // ✅ FIX
         return stockRecordRepository.save(record);
     }
 
@@ -67,7 +67,7 @@ public class StockRecordServiceImpl implements StockRecordService {
 
         record.setCurrentQuantity(updated.getCurrentQuantity());
         record.setReorderThreshold(updated.getReorderThreshold());
-        record.setLastUpdated(LocalDate.now());
+        record.setLastUpdated(LocalDateTime.now());   // ✅ FIX
 
         return stockRecordRepository.save(record);
     }
