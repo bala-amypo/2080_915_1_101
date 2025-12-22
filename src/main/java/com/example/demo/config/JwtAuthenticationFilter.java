@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,35 +34,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
 
-            if (jwtProvider.validateToken(token)) {
+            try {
+                Claims claims = jwtProvider.validateToken(token);
 
-                String email = jwtProvider.getEmailFromToken(token);
-
-                @SuppressWarnings("unchecked")
-                List<String> roles =
-                        (List<String>) io.jsonwebtoken.Jwts.parserBuilder()
-                                .setSigningKey(
-                                        io.jsonwebtoken.security.Keys.hmacShaKeyFor(
-                                                "my-super-secure-jwt-secret-key-my-super-secure-jwt-secret-key"
-                                                        .getBytes()
-                                        )
-                                )
-                                .build()
-                                .parseClaimsJws(token)
-                                .getBody()
-                                .get("roles");
+                String email = claims.getSubject();
+                List<String> roles = claims.get("roles", List.class);
 
                 var authorities = roles.stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-                var authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                email, null, authorities);
+                var auth = new UsernamePasswordAuthenticationToken(
+                        email, null, authorities
+                );
 
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+
+            } catch (Exception ignored) {
+                SecurityContextHolder.clearContext();
             }
         }
 

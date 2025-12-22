@@ -29,29 +29,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    /* ================= METHODS EXPECTED BY TESTS ================= */
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException ex) {
-            return false;
-        }
-    }
-
-    public String getEmailFromToken(String token) {
-        return getClaims(token).getSubject();
-    }
-
-    public Long getUserId(String token) {
-        return getClaims(token).get("userId", Long.class);
-    }
-
-    private Claims getClaims(String token) {
+    public Claims validateToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
