@@ -18,27 +18,48 @@ public class StockRecordServiceImpl implements StockRecordService {
         this.stockRecordRepository = stockRecordRepository;
     }
 
+    /* ================= CREATE ================= */
+
     @Override
     public StockRecord createStockRecord(String productId, String warehouseId, StockRecord record) {
-        record.setLastUpdated(LocalDate.now());   // ✅ FIX HERE
+        record.setLastUpdated(LocalDate.now());
         return stockRecordRepository.save(record);
     }
 
+    /* ================= READ ================= */
+
     @Override
     public StockRecord getStockRecord(String id) {
-        return stockRecordRepository.findById(Long.parseLong(id))
+        return getStockRecord(Long.parseLong(id));
+    }
+
+    @Override
+    public StockRecord getStockRecord(Long id) {
+        return stockRecordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
     }
 
     @Override
     public List<StockRecord> getRecordsBy_product(String productId) {
-        return stockRecordRepository.findByProductId(Long.parseLong(productId));
+        return getRecordsBy_product(Long.parseLong(productId));
+    }
+
+    @Override
+    public List<StockRecord> getRecordsBy_product(Long productId) {
+        return stockRecordRepository.findByProductId(productId);
     }
 
     @Override
     public List<StockRecord> getRecordsByWarehouse(String warehouseId) {
-        return stockRecordRepository.findByWarehouseId(Long.parseLong(warehouseId));
+        return getRecordsByWarehouse(Long.parseLong(warehouseId));
     }
+
+    @Override
+    public List<StockRecord> getRecordsByWarehouse(Long warehouseId) {
+        return stockRecordRepository.findByWarehouseId(warehouseId);
+    }
+
+    /* ================= UPDATE ================= */
 
     @Override
     public StockRecord updateStock(String id, StockRecord updated) {
@@ -46,7 +67,7 @@ public class StockRecordServiceImpl implements StockRecordService {
 
         record.setCurrentQuantity(updated.getCurrentQuantity());
         record.setReorderThreshold(updated.getReorderThreshold());
-        record.setLastUpdated(LocalDate.now());   // ✅ FIX HERE
+        record.setLastUpdated(LocalDate.now());
 
         return stockRecordRepository.save(record);
     }
