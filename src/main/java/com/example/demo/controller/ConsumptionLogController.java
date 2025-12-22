@@ -10,28 +10,29 @@ import java.util.List;
 @RequestMapping("/api/consumption")
 public class ConsumptionLogController {
 
-    private final ConsumptionLogService service;
+    private final ConsumptionLogService consumptionLogService;
 
-    public ConsumptionLogController(ConsumptionLogService service) {
-        this.service = service;
+    public ConsumptionLogController(ConsumptionLogService consumptionLogService) {
+        this.consumptionLogService = consumptionLogService;
     }
 
-    /* ===== REST ===== */
+    @PostMapping("/{stockRecordId}")
+    public ConsumptionLog logConsumption(
+            @PathVariable Long stockRecordId,
+            @RequestBody ConsumptionLog log) {
+
+        return consumptionLogService.logConsumption(stockRecordId, log);
+    }
+
+    @GetMapping("/record/{stockRecordId}")
+    public List<ConsumptionLog> getLogsByStockRecord(
+            @PathVariable Long stockRecordId) {
+
+        return consumptionLogService.getLogsByStockRecord(stockRecordId);
+    }
+
     @GetMapping("/{id}")
-    public ConsumptionLog getLog(@PathVariable String id) {
-        return service.getLog(id);
-    }
-
-    /* ===== TEST SUPPORT ===== */
-    public ConsumptionLog getLog(long id) {
-        return service.getLog(id);
-    }
-
-    public List<ConsumptionLog> getLogsByStockRecord(String stockId) {
-        return service.getLogsByStockRecord(stockId);
-    }
-
-    public List<ConsumptionLog> getLogsByStockRecord(long stockId) {
-        return service.getLogsByStockRecord(stockId);
+    public ConsumptionLog getLog(@PathVariable Long id) {
+        return consumptionLogService.getLog(id);
     }
 }

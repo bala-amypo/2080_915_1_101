@@ -10,36 +10,33 @@ import java.util.List;
 @RequestMapping("/api/stocks")
 public class StockRecordController {
 
-    private final StockRecordService service;
+    private final StockRecordService stockRecordService;
 
-    public StockRecordController(StockRecordService service) {
-        this.service = service;
+    public StockRecordController(StockRecordService stockRecordService) {
+        this.stockRecordService = stockRecordService;
     }
 
-    /* ===== REST ===== */
+    @PostMapping("/{productId}/{warehouseId}")
+    public StockRecord createStockRecord(
+            @PathVariable Long productId,
+            @PathVariable Long warehouseId,
+            @RequestBody StockRecord record) {
+
+        return stockRecordService.createStockRecord(productId, warehouseId, record);
+    }
+
     @GetMapping("/{id}")
-    public StockRecord getStockRecord(@PathVariable String id) {
-        return service.getStockRecord(id);
+    public StockRecord getStockRecord(@PathVariable Long id) {
+        return stockRecordService.getStockRecord(id);
     }
 
-    /* ===== TEST SUPPORT ===== */
-    public StockRecord getStockRecord(long id) {
-        return service.getStockRecord(id);
+    @GetMapping("/product/{productId}")
+    public List<StockRecord> getByProduct(@PathVariable Long productId) {
+        return stockRecordService.getRecordsBy_product(productId);
     }
 
-    public List<StockRecord> getByProduct(String productId) {
-        return service.getRecordsBy_product(productId);
-    }
-
-    public List<StockRecord> getByProduct(long productId) {
-        return service.getRecordsBy_product(productId);
-    }
-
-    public List<StockRecord> getByWarehouse(String warehouseId) {
-        return service.getRecordsByWarehouse(warehouseId);
-    }
-
-    public List<StockRecord> getByWarehouse(long warehouseId) {
-        return service.getRecordsByWarehouse(warehouseId);
+    @GetMapping("/warehouse/{warehouseId}")
+    public List<StockRecord> getByWarehouse(@PathVariable Long warehouseId) {
+        return stockRecordService.getRecordsByWarehouse(warehouseId);
     }
 }
