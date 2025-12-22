@@ -1,30 +1,44 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "products", uniqueConstraints = @UniqueConstraint(columnNames = "sku"))
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String productName;
+    @NotBlank
+    private String name;
 
-    @Column(nullable = false, unique = true)
-    private String sku;
-
+    @NotBlank
     private String category;
 
-    private LocalDateTime createdAt;
+    public Product() {}
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 }
