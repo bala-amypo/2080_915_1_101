@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 @Entity
 public class Product {
@@ -18,6 +19,8 @@ public class Product {
 
     @NotBlank
     private String category;
+
+    private LocalDateTime createdAt;
 
     public Product() {}
 
@@ -49,6 +52,11 @@ public class Product {
 
         public Builder category(String category) {
             product.setCategory(category);
+            return this;
+        }
+
+        public Builder createdAt(LocalDateTime createdAt) {
+            product.setCreatedAt(createdAt);
             return this;
         }
 
@@ -91,5 +99,13 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
