@@ -5,6 +5,8 @@ import java.util.List;
 
 public interface ProductService {
 
+    Product createProduct(Product product);
+
     Product getProduct(String id);
     Product getProduct(long id);
 

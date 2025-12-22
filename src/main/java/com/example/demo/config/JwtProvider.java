@@ -1,39 +1,44 @@
 package com.example.demo.config;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class JwtProvider {
 
-    private static final String SECRET_KEY =
-            "my-super-secure-jwt-secret-key-my-super-secure-jwt-secret-key";
+    private final String SECRET_KEY = "secretkey123";
+    private final long EXPIRATION_TIME = 86400000; // 1 day
 
-    private static final long EXPIRATION_MS = 24 * 60 * 60 * 1000;
-
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-
-    public String generateToken(Long userId, String email, List<String> roles) {
+    public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("userId", userId)
-                .claim("roles", roles)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
 
-    public Claims validateToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
+    public Claims getClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String getEmailFromToken(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            getClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
