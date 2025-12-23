@@ -2,13 +2,13 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products") // ✅ THIS IS THE KEY FIX
 public class ProductController {
 
     private final ProductService productService;
@@ -17,31 +17,21 @@ public class ProductController {
         this.productService = productService;
     }
 
+    // t7_createProduct
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-
-        // Validation required by tests
-        if (product.getProductName() == null ||
-            product.getSku() == null ||
-            product.getCategory() == null) {
-
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.ok(productService.createProduct(product));
+    public Product createProduct(@Valid @RequestBody Product product) {
+        return productService.save(product);
     }
 
+    // t8_getProduct
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
-        Product product = productService.getProduct(id);
-        if (product == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(product);
+    public Product getProduct(@PathVariable Long id) {
+        return productService.getProduct(id);
     }
 
+    // t9_listProducts
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public List<Product> listProducts() {
+        return productService.getAllProducts();
     }
 }
