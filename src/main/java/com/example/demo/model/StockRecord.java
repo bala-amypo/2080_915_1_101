@@ -1,32 +1,34 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "stock_records", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"product_id", "warehouse_id"})
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class StockRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Warehouse warehouse;
 
-    private int currentQuantity;
-    private int reorderThreshold;
+    private Integer currentQuantity;
 
-    public Long getId() { return id; }
-    public Product getProduct() { return product; }
-    public Warehouse getWarehouse() { return warehouse; }
-    public int getCurrentQuantity() { return currentQuantity; }
-    public int getReorderThreshold() { return reorderThreshold; }
+    private Integer reorderThreshold;
 
-    public void setId(Long id) { this.id = id; }
-    public void setProduct(Product product) { this.product = product; }
-    public void setWarehouse(Warehouse warehouse) { this.warehouse = warehouse; }
-    public void setCurrentQuantity(int currentQuantity) { this.currentQuantity = currentQuantity; }
-    public void setReorderThreshold(int reorderThreshold) { this.reorderThreshold = reorderThreshold; }
+    private LocalDateTime lastUpdated;
 }
