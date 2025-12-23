@@ -8,30 +8,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products") // ✅ THIS IS THE KEY FIX
+@RequestMapping("/api/products") // ✅ REQUIRED
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductService service;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    public ProductController(ProductService service) {
+        this.service = service;
     }
 
-    // t7_createProduct
     @PostMapping
-    public Product createProduct(@Valid @RequestBody Product product) {
-        return productService.save(product);
+    public Product create(@Valid @RequestBody Product product) {
+        return service.save(product); // now exists
     }
 
-    // t8_getProduct
     @GetMapping("/{id}")
-    public Product getProduct(@PathVariable Long id) {
-        return productService.getProduct(id);
+    public Product get(@PathVariable Long id) {
+        return service.getProduct(id);
     }
 
-    // t9_listProducts
     @GetMapping
-    public List<Product> listProducts() {
-        return productService.getAllProducts();
+    public List<Product> list() {
+        return service.getAllProducts();
     }
 }
