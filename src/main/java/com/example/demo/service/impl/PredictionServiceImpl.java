@@ -17,37 +17,39 @@ import java.util.List;
 @Service
 public class PredictionServiceImpl implements PredictionService {
 
-    private final PredictionRuleRepository ruleRepository;
     private final StockRecordRepository stockRecordRepository;
     private final ConsumptionLogRepository logRepository;
+    private final PredictionRuleRepository ruleRepository;
 
-    public PredictionServiceImpl(
-            PredictionRuleRepository ruleRepository,
-            StockRecordRepository stockRecordRepository,
-            ConsumptionLogRepository logRepository) {
-
-        this.ruleRepository = ruleRepository;
+    public PredictionServiceImpl(StockRecordRepository stockRecordRepository,
+                                 ConsumptionLogRepository logRepository,
+                                 PredictionRuleRepository ruleRepository) {
         this.stockRecordRepository = stockRecordRepository;
         this.logRepository = logRepository;
+        this.ruleRepository = ruleRepository;
     }
 
     @Override
-    public PredictionRule createRule(PredictionRule rule) {
+    public LocalDate predictRestockDate(Long stockRecordId) {
 
-        if (rule.getAverageDaysWindow() <= 0) {
-            throw new IllegalArgumentException("averageDaysWindow must be > 0");
+        StockRecord record = stockRecordRepository.findById(stockRecordId)
+                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
+
+        List<ConsumptionLog> logs = logRepository.findByStockRecordId(stockRecordId);
+
+        if (logs.isEmpty()) {
+            return LocalDate.now();
         }
-        if (rule.getMinDailyUsage() > rule.getMaxDailyUsage()) {
-            throw new IllegalArgumentException("minDailyUsage must be <= maxDailyUsage");
-        }
 
-        ruleRepository.findByRuleName(rule.getRuleName())
-                .ifPresent(r -> {
-                    throw new IllegalArgumentException("ruleName already exists");
-                });
+        double avgDailyUsage = logs.stream()
+                .mapToInt(ConsumptionLog::getConsumedQuantity)
+                .average()
+                .orElse(1);
 
-        rule.setCreatedAt(LocalDateTime.now());
-        return ruleRepository.save(rule);
+        int remaining = record.getCurrentQuantity() - record.getReorderThreshold();
+        int daysLeft = (int) Math.ceil(remaining / avgDailyUsage);
+
+        return LocalDate.now().plusDays(Math.max(daysLeft, 0));
     }
 
     @Override
@@ -56,27 +58,22 @@ public class PredictionServiceImpl implements PredictionService {
     }
 
     @Override
-    public LocalDate predictRestockDate(Long stockRecordId) {
+    public PredictionRule createRule(PredictionRule rule) {
 
-        StockRecord record = stockRecordRepository.findById(stockRecordId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("StockRecord not found"));
-
-        List<ConsumptionLog> logs =
-                logRepository.findByStockRecordId(stockRecordId);
-
-        if (logs.isEmpty()) {
-            return LocalDate.now();
+        if (rule.getAverageDaysWindow() <= 0) {
+            throw new IllegalArgumentException("averageDaysWindow must be greater than zero");
         }
 
-        double avgDailyUsage =
-                logs.stream().mapToInt(ConsumptionLog::getConsumedQuantity).average().orElse(0);
+        if (rule.getMinDailyUsage() > rule.getMaxDailyUsage()) {
+            throw new IllegalArgumentException("minDailyUsage must be <= maxDailyUsage");
+        }
 
-        int remaining =
-                record.getCurrentQuantity() - record.getReorderThreshold();
+        ruleRepository.findByRuleName(rule.getRuleName())
+                .ifPresent(r -> {
+                    throw new IllegalArgumentException("Rule already exists");
+                });
 
-        int days = avgDailyUsage == 0 ? 0 : (int) Math.ceil(remaining / avgDailyUsage);
-
-        return LocalDate.now().plusDays(Math.max(days, 0));
+        rule.setCreatedAt(LocalDateTime.now());
+        return ruleRepository.save(rule);
     }
 }

@@ -17,9 +17,8 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
     private final ConsumptionLogRepository logRepository;
     private final StockRecordRepository stockRecordRepository;
 
-    public ConsumptionLogServiceImpl(
-            ConsumptionLogRepository logRepository,
-            StockRecordRepository stockRecordRepository) {
+    public ConsumptionLogServiceImpl(ConsumptionLogRepository logRepository,
+                                     StockRecordRepository stockRecordRepository) {
         this.logRepository = logRepository;
         this.stockRecordRepository = stockRecordRepository;
     }
@@ -27,19 +26,18 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
     @Override
     public ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log) {
 
-        StockRecord record = stockRecordRepository.findById(stockRecordId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("StockRecord not found"));
+        StockRecord stockRecord = stockRecordRepository.findById(stockRecordId)
+                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
 
         if (log.getConsumedQuantity() <= 0) {
-            throw new IllegalArgumentException("consumedQuantity must be > 0");
+            throw new IllegalArgumentException("Consumed quantity must be greater than zero");
         }
 
         if (log.getConsumedDate().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("consumedDate cannot be future");
         }
 
-        log.setStockRecord(record);
+        log.setStockRecord(stockRecord);
         return logRepository.save(log);
     }
 
@@ -51,7 +49,6 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
     @Override
     public ConsumptionLog getLog(Long id) {
         return logRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("ConsumptionLog not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found"));
     }
 }

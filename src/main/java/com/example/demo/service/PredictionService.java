@@ -9,7 +9,7 @@ public interface PredictionService {
 
     LocalDate predictRestockDate(Long stockRecordId);
 
-    PredictionRule createRule(PredictionRule rule);
-
     List<PredictionRule> getAllRules();
+
+    PredictionRule createRule(PredictionRule rule);
 }
