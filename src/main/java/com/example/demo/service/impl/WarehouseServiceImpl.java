@@ -21,7 +21,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public Warehouse createWarehouse(Warehouse warehouse) {
         if (warehouse.getLocation() == null || warehouse.getLocation().isBlank()) {
-            throw new IllegalArgumentException("Location must not be empty");
+            throw new IllegalArgumentException("location cannot be empty");
         }
 
         warehouse.setCreatedAt(LocalDateTime.now());
@@ -31,7 +31,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public Warehouse getWarehouse(Long id) {
         return warehouseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Warehouse not found"));
     }
 
     @Override

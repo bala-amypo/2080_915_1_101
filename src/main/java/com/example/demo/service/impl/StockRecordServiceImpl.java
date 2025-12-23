@@ -20,9 +20,11 @@ public class StockRecordServiceImpl implements StockRecordService {
     private final ProductRepository productRepository;
     private final WarehouseRepository warehouseRepository;
 
-    public StockRecordServiceImpl(StockRecordRepository stockRecordRepository,
-                                  ProductRepository productRepository,
-                                  WarehouseRepository warehouseRepository) {
+    public StockRecordServiceImpl(
+            StockRecordRepository stockRecordRepository,
+            ProductRepository productRepository,
+            WarehouseRepository warehouseRepository) {
+
         this.stockRecordRepository = stockRecordRepository;
         this.productRepository = productRepository;
         this.warehouseRepository = warehouseRepository;
@@ -32,20 +34,24 @@ public class StockRecordServiceImpl implements StockRecordService {
     public StockRecord createStockRecord(Long productId, Long warehouseId, StockRecord record) {
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Product not found"));
 
         Warehouse warehouse = warehouseRepository.findById(warehouseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Warehouse not found"));
 
-        boolean exists = stockRecordRepository.findByProductId(productId).stream()
-                .anyMatch(r -> r.getWarehouse().getId().equals(warehouseId));
+        stockRecordRepository.findByProductId(productId).forEach(existing -> {
+            if (existing.getWarehouse().getId().equals(warehouseId)) {
+                throw new IllegalArgumentException("StockRecord already exists");
+            }
+        });
 
-        if (exists) {
-            throw new IllegalArgumentException("StockRecord already exists");
+        if (record.getCurrentQuantity() < 0) {
+            throw new IllegalArgumentException("currentQuantity must be >= 0");
         }
-
-        if (record.getCurrentQuantity() < 0 || record.getReorderThreshold() <= 0) {
-            throw new IllegalArgumentException("Invalid stock quantities");
+        if (record.getReorderThreshold() <= 0) {
+            throw new IllegalArgumentException("reorderThreshold must be > 0");
         }
 
         record.setProduct(product);
@@ -58,7 +64,8 @@ public class StockRecordServiceImpl implements StockRecordService {
     @Override
     public StockRecord getStockRecord(Long id) {
         return stockRecordRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("StockRecord not found"));
     }
 
     @Override
