@@ -34,7 +34,8 @@ public class ConsumptionLogServiceImpl implements ConsumptionLogService {
         }
 
         if (log.getConsumedDate().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("consumedDate cannot be future");
+            throw new IllegalArgume
+            ntException("consumedDate cannot be future");
         }
 
         log.setStockRecord(stockRecord);
