@@ -1,28 +1,22 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "warehouses", uniqueConstraints = @UniqueConstraint(columnNames = "warehouseName"))
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Warehouse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String warehouseName;
-
-    @Column(nullable = false)
+    private String name;
     private String location;
 
-    private LocalDateTime createdAt;
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public String getLocation() { return location; }
+
+    public void setId(Long id) { this.id = id; }
+    public void setName(String name) { this.name = name; }
+    public void setLocation(String location) { this.location = location; }
 }
