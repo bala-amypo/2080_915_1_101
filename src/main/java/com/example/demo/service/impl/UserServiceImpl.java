@@ -8,7 +8,6 @@ import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,12 +18,9 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -49,7 +45,8 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .name(dto.getName())
                 .email(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword()))
+                // ❗ Plain password (NO ENCODER)
+                .password(dto.getPassword())
                 .roles(roles)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -63,11 +60,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        // ❗ Plain password comparison
+        if (!user.getPassword().equals(request.getPassword())) {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        // JWT NOT USED → return dummy token
         return new AuthResponse(
                 "LOGIN_SUCCESS",
                 user.getId(),
