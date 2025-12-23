@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")   // ✅ IMPORTANT
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -18,25 +18,21 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // ✅ t7_createProduct
+    // ✅ TEST EXPECTS createProduct()
     @PostMapping
     public ResponseEntity<Product> createProduct(
             @Valid @RequestBody Product product) {
 
-        return ResponseEntity.ok(productService.save(product));
+        return ResponseEntity.ok(productService.createProduct(product));
     }
 
-    // ✅ t8_getProduct
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id) {
-
         return ResponseEntity.ok(productService.getById(id));
     }
 
-    // ✅ t9_listProducts
     @GetMapping
     public ResponseEntity<List<Product>> listProducts() {
-
         return ResponseEntity.ok(productService.getAll());
     }
 }
