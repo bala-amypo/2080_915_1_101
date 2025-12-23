@@ -6,9 +6,12 @@ import java.util.List;
 
 public interface ProductService {
 
-    Product createProduct(Product product);
+    // ✅ must exist (used by controller & tests)
+    Product save(Product product);
 
-    Product getProduct(Long id);
+    // ✅ must exist
+    Product getById(Long id);
 
-    List<Product> getAllProducts();
+    // ✅ must exist
+    List<Product> getAll();
 }
