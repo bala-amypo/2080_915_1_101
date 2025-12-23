@@ -1,9 +1,9 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Product;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
-import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +17,18 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
     }
 
-    // ✅ used by POST /products
+    // ✅ TEST EXPECTS THIS METHOD
+    @Override
+    public Product createProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+    // keep for internal usage
     @Override
     public Product save(Product product) {
         return productRepository.save(product);
     }
 
-    // ✅ used by GET /products/{id}
     @Override
     public Product getById(Long id) {
         return productRepository.findById(id)
@@ -31,7 +36,6 @@ public class ProductServiceImpl implements ProductService {
                         new ResourceNotFoundException("Product not found with id: " + id));
     }
 
-    // ✅ used by GET /products
     @Override
     public List<Product> getAll() {
         return productRepository.findAll();
