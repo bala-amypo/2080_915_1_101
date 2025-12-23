@@ -2,14 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.model.StockRecord;
 import com.example.demo.service.StockRecordService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/stocks")
-@Tag(name = "Stock Records")
 public class StockRecordController {
 
     private final StockRecordService stockRecordService;
@@ -19,10 +17,17 @@ public class StockRecordController {
     }
 
     @PostMapping("/{productId}/{warehouseId}")
-    public StockRecord createStockRecord(@PathVariable Long productId,
-                                         @PathVariable Long warehouseId,
-                                         @RequestBody StockRecord record) {
+    public StockRecord createStockRecord(
+            @PathVariable Long productId,
+            @PathVariable Long warehouseId,
+            @RequestBody StockRecord record) {
+
         return stockRecordService.createStockRecord(productId, warehouseId, record);
+    }
+
+    @GetMapping("/{id}")
+    public StockRecord getStockRecord(@PathVariable Long id) {
+        return stockRecordService.getStockRecord(id);
     }
 
     @GetMapping("/product/{productId}")
@@ -33,10 +38,5 @@ public class StockRecordController {
     @GetMapping("/warehouse/{warehouseId}")
     public List<StockRecord> getByWarehouse(@PathVariable Long warehouseId) {
         return stockRecordService.getRecordsByWarehouse(warehouseId);
-    }
-
-    @GetMapping("/{id}")
-    public StockRecord getStockRecord(@PathVariable Long id) {
-        return stockRecordService.getStockRecord(id);
     }
 }

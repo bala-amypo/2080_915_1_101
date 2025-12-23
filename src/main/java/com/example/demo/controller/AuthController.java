@@ -5,12 +5,10 @@ import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.UserRegisterDto;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Authentication")
 public class AuthController {
 
     private final UserService userService;

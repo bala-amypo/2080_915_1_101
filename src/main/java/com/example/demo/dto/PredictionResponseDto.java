@@ -1,14 +1,15 @@
 package com.example.demo.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
-public class PredictionResponseDto {
+public class PredictionResponse {
 
-    private Long stockRecordId;
-    private LocalDate predictedRestockDate;
+    private LocalDate restockDate;
 }

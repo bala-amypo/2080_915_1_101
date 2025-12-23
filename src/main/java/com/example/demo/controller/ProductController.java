@@ -2,14 +2,13 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products")
-@Tag(name = "Products")
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -19,17 +18,30 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productService.createProduct(product);
-    }
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
 
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+        // Validation required by tests
+        if (product.getProductName() == null ||
+            product.getSku() == null ||
+            product.getCategory() == null) {
+
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(productService.createProduct(product));
     }
 
     @GetMapping("/{id}")
-    public Product getProduct(@PathVariable Long id) {
-        return productService.getProduct(id);
+    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
+        Product product = productService.getProduct(id);
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(product);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 }
