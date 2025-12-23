@@ -7,7 +7,6 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.security.JwtProvider;
 import com.example.demo.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,20 +20,18 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
 
     public UserServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder,
-                           JwtProvider jwtProvider) {
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtProvider = jwtProvider;
     }
 
     @Override
     public User register(UserRegisterDto dto) {
 
-        if (dto.getName().isBlank() || dto.getPassword().isBlank()) {
+        if (dto.getName() == null || dto.getName().isBlank()
+                || dto.getPassword() == null || dto.getPassword().isBlank()) {
             throw new IllegalArgumentException("Invalid user details");
         }
 
@@ -43,9 +40,11 @@ public class UserServiceImpl implements UserService {
                     throw new IllegalArgumentException("Email already exists");
                 });
 
-        Set<Role> roles = dto.getRoles() == null || dto.getRoles().isEmpty()
+        Set<Role> roles = (dto.getRoles() == null || dto.getRoles().isEmpty())
                 ? Set.of(Role.ROLE_USER)
-                : dto.getRoles().stream().map(Role::valueOf).collect(Collectors.toSet());
+                : dto.getRoles().stream()
+                        .map(Role::valueOf)
+                        .collect(Collectors.toSet());
 
         User user = User.builder()
                 .name(dto.getName())
@@ -68,13 +67,14 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        String token = jwtProvider.generateToken(user);
-
+        // JWT NOT USED → return dummy token
         return new AuthResponse(
-                token,
+                "LOGIN_SUCCESS",
                 user.getId(),
                 user.getEmail(),
-                user.getRoles().stream().map(Enum::name).collect(Collectors.toSet())
+                user.getRoles().stream()
+                        .map(Enum::name)
+                        .collect(Collectors.toSet())
         );
     }
 
