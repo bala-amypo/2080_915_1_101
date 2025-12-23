@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")   // 🔥 MUST BE /api/products
 public class ProductController {
 
     private final ProductService productService;
@@ -18,7 +18,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // ✅ TEST EXPECTS createProduct()
     @PostMapping
     public ResponseEntity<Product> createProduct(
             @Valid @RequestBody Product product) {
@@ -28,11 +27,11 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getById(id));
+        return ResponseEntity.ok(productService.getProduct(id));
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> listProducts() {
-        return ResponseEntity.ok(productService.getAll());
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 }
