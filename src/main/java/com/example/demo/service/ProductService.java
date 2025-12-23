@@ -5,10 +5,14 @@ import java.util.List;
 
 public interface ProductService {
 
-    // ✅ REQUIRED BY TESTS
+    // 🔹 REQUIRED BY TESTS
     Product createProduct(Product product);
 
-    // keep these (used elsewhere)
+    Product getProduct(Long id);
+
+    List<Product> getAllProducts();
+
+    // 🔹 KEEP existing methods (used elsewhere)
     Product save(Product product);
 
     Product getById(Long id);

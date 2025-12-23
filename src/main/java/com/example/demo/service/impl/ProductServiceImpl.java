@@ -17,13 +17,25 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
     }
 
-    // ✅ TEST EXPECTS THIS METHOD
+    // 🔹 TEST EXPECTED METHODS
+
     @Override
     public Product createProduct(Product product) {
         return productRepository.save(product);
     }
 
-    // keep for internal usage
+    @Override
+    public Product getProduct(Long id) {
+        return getById(id);
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+        return getAll();
+    }
+
+    // 🔹 EXISTING METHODS (DO NOT REMOVE)
+
     @Override
     public Product save(Product product) {
         return productRepository.save(product);
