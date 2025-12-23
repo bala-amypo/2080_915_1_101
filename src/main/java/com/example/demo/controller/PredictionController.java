@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.PredictionResponseDto;
 import com.example.demo.model.PredictionRule;
 import com.example.demo.service.PredictionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -20,8 +20,11 @@ public class PredictionController {
     }
 
     @GetMapping("/restock-date/{stockRecordId}")
-    public LocalDate predictRestockDate(@PathVariable Long stockRecordId) {
-        return predictionService.predictRestockDate(stockRecordId);
+    public PredictionResponseDto predictRestockDate(@PathVariable Long stockRecordId) {
+        return new PredictionResponseDto(
+                stockRecordId,
+                predictionService.predictRestockDate(stockRecordId)
+        );
     }
 
     @PostMapping("/rules")

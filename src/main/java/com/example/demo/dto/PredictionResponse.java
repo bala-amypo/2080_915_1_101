@@ -1,28 +1,16 @@
-package com.example.demo.model;
+package com.example.demo.dto;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
-@Entity
-public class ConsumptionLog {
+@Getter
+@Setter
+@AllArgsConstructor
+public class PredictionResponseDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    private StockRecord stockRecord;
-
-    private int consumedQuantity;
-    private LocalDate consumedDate;
-
-    public Long getId() { return id; }
-    public StockRecord getStockRecord() { return stockRecord; }
-    public int getConsumedQuantity() { return consumedQuantity; }
-    public LocalDate getConsumedDate() { return consumedDate; }
-
-    public void setId(Long id) { this.id = id; }
-    public void setStockRecord(StockRecord stockRecord) { this.stockRecord = stockRecord; }
-    public void setConsumedQuantity(int consumedQuantity) { this.consumedQuantity = consumedQuantity; }
-    public void setConsumedDate(LocalDate consumedDate) { this.consumedDate = consumedDate; }
+    private Long stockRecordId;
+    private LocalDate predictedRestockDate;
 }
