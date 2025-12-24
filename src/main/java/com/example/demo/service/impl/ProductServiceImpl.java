@@ -1,31 +1,41 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.Product;
+import com.example.demo.repository.ProductRepository;
+import com.example.demo.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
-@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
+    @Override
     public Product createProduct(Product product) {
-        // Validation: Product name must not be empty [cite: 30, 157]
         if (product.getProductName() == null || product.getProductName().isEmpty()) {
             throw new IllegalArgumentException("Product name cannot be empty");
         }
-
-        // Validation: SKU must be unique [cite: 30, 110]
         if (productRepository.findBySku(product.getSku()).isPresent()) {
             throw new IllegalArgumentException("Product with this SKU already exists");
         }
-
-        product.setCreatedAt(LocalDateTime.now()); // [cite: 157]
+        product.setCreatedAt(LocalDateTime.now());
         return productRepository.save(product);
     }
 
+    @Override
     public Product getProduct(Long id) {
-        // Retrieve or throw ResourceNotFoundException [cite: 158]
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     }
 
+    @Override
     public List<Product> getAllProducts() {
-        return productRepository.findAll(); // [cite: 159]
+        return productRepository.findAll();
     }
 }
