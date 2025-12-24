@@ -1,9 +1,12 @@
 package com.example.demo.config;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Set;
 
@@ -16,41 +19,39 @@ public class JwtProvider {
     @Value("${app.jwtExpirationMs:86400000}")
     private int jwtExpirationMs;
 
+    private SecretKey getKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    }
+
     public String generateToken(String email, Long userId, Set<String> roles) {
-        // syntax compatible with jjwt 0.9.x
         return Jwts.builder()
-                .setSubject(email)
+                .subject(email)
                 .claim("userId", userId)
                 .claim("roles", roles)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .issuedAt(new Date())
+                .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(getKey(), Jwts.SIG.HS512) // Updated for 0.12.x compatibility
                 .compact();
     }
 
     public String getEmailFromToken(String token) {
-        // syntax compatible with jjwt 0.9.x
         return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody()
+                .verifyWith(getKey()) // 'verifyWith' is preferred in 0.12.x over setSigningKey
+                .build()              // <--- THIS IS THE MISSING FIX
+                .parseSignedClaims(token) // 'parseSignedClaims' is preferred in 0.12.x
+                .getPayload()
                 .getSubject();
     }
     
     public Long getUserId(String token) {
         try {
-            // syntax compatible with jjwt 0.9.x
             Claims claims = Jwts.parser()
-                    .setSigningKey(jwtSecret)
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .verifyWith(getKey())
+                    .build()          // <--- THIS IS THE MISSING FIX
+                    .parseSignedClaims(token)
+                    .getPayload();
             
-            // Safe conversion for Integer/Long issues in claims
-            Object id = claims.get("userId");
-            if (id != null) {
-                return Long.valueOf(id.toString());
-            }
-            return null;
+            return claims.get("userId", Long.class);
         } catch (Exception e) {
             return null;
         }
@@ -58,22 +59,13 @@ public class JwtProvider {
 
     public boolean validateToken(String authToken) {
         try {
-            // syntax compatible with jjwt 0.9.x
             Jwts.parser()
-                    .setSigningKey(jwtSecret)
-                    .parseClaimsJws(authToken);
+                    .verifyWith(getKey())
+                    .build()          // <--- THIS IS THE MISSING FIX
+                    .parseSignedClaims(authToken);
             return true;
-        } catch (SignatureException e) {
-            // Invalid JWT signature
-        } catch (MalformedJwtException e) {
-            // Invalid JWT token
-        } catch (ExpiredJwtException e) {
-            // Expired JWT token
-        } catch (UnsupportedJwtException e) {
-            // Unsupported JWT token
-        } catch (IllegalArgumentException e) {
-            // JWT claims string is empty
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
         }
-        return false;
     }
 }
