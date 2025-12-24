@@ -1,15 +1,15 @@
-package com.example.demo.entity;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(
     name = "products",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "sku")
-    }
+    uniqueConstraints = @UniqueConstraint(columnNames = "sku")
 )
 @Getter
 @Setter
@@ -30,5 +30,7 @@ public class Product {
     @Column(nullable = false, unique = true)
     private String sku;
 
-    private String description;
+    private String category;
+
+    private LocalDateTime createdAt;
 }
