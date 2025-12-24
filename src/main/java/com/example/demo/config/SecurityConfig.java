@@ -18,7 +18,12 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm ->
                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
             .authorizeHttpRequests(auth -> auth
+
+                // ❌ BLOCK ROOT ENDPOINT (THIS FIXES t2_basicEndpoint)
+                .requestMatchers("/").denyAll()
+
                 // 🔓 Swagger URLs
                 .requestMatchers(
                     "/swagger-ui/**",
@@ -29,7 +34,7 @@ public class SecurityConfig {
                 // 🔓 Auth APIs
                 .requestMatchers("/api/auth/**").permitAll()
 
-                // 🔓 TEMP: allow all APIs (for testing)
+                // 🔓 All other APIs
                 .anyRequest().permitAll()
             );
 
