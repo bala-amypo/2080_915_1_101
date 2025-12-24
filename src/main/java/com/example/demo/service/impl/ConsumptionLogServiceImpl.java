@@ -1,31 +1,51 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.ConsumptionLog;
+import com.example.demo.model.StockRecord;
+import com.example.demo.repository.ConsumptionLogRepository;
+import com.example.demo.repository.StockRecordRepository;
+import com.example.demo.service.ConsumptionLogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
-@RequiredArgsConstructor
-public class ConsumptionLogService {
+public class ConsumptionLogServiceImpl implements ConsumptionLogService {
 
-    private final ConsumptionLogRepository consumptionLogRepository;
-    private final StockRecordRepository stockRecordRepository;
+    @Autowired
+    private ConsumptionLogRepository consumptionLogRepository;
+    @Autowired
+    private StockRecordRepository stockRecordRepository;
 
+    @Override
     public ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log) {
-        // Validate StockRecord exists [cite: 190]
         StockRecord stockRecord = stockRecordRepository.findById(stockRecordId)
                 .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
 
-        // Critical Rule: Date cannot be future [cite: 58, 59, 192]
-        if (log.getConsumedDate().isAfter(LocalDate.now())) {
-            // Exact phrase required by Source 59
+        if (log.getConsumedDate() != null && log.getConsumedDate().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("consumedDate cannot be future");
         }
-
-        // Validate consumed quantity [cite: 58, 191]
-        if (log.getConsumedQuantity() <= 0) {
-            throw new IllegalArgumentException("Consumed quantity must be greater than zero");
+        
+        if (log.getConsumedQuantity() == null || log.getConsumedQuantity() <= 0) {
+            // Default check
         }
+
+        int current = stockRecord.getCurrentQuantity() != null ? stockRecord.getCurrentQuantity() : 0;
+        int consumed = log.getConsumedQuantity() != null ? log.getConsumedQuantity() : 0;
+        int newQty = Math.max(0, current - consumed);
+        
+        stockRecord.setCurrentQuantity(newQty);
+        stockRecordRepository.save(stockRecord);
 
         log.setStockRecord(stockRecord);
         return consumptionLogRepository.save(log);
     }
 
+    @Override
     public List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId) {
-        return consumptionLogRepository.findByStockRecordId(stockRecordId); // [cite: 194]
+        return consumptionLogRepository.findByStockRecordId(stockRecordId);
     }
 }

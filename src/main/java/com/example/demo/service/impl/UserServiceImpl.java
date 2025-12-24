@@ -1,42 +1,71 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.config.JwtProvider;
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.UserRegisterDto;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.Role;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
-@RequiredArgsConstructor
-public class UserService {
+public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtProvider jwtProvider;
 
-    public User register(UserRegisterDto dto) {
-        // Check if email exists [cite: 81, 214]
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already in use");
+    @Override
+    public User registerUser(UserRegisterDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
         }
-
-        // Create User entity
-        User user = User.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword())) // Encode password [cite: 215]
-                .createdAt(LocalDateTime.now())
-                .roles(Collections.singleton(Role.ROLE_USER)) // Default role [cite: 215]
-                .build();
-
+        
+        User user = new User();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setCreatedAt(LocalDateTime.now());
+        
+        Set<Role> roles = new HashSet<>();
+        if ("ADMIN".equalsIgnoreCase(dto.getRole())) {
+            roles.add(Role.ROLE_ADMIN);
+        } else {
+            roles.add(Role.ROLE_USER);
+        }
+        user.setRoles(roles);
+        
         return userRepository.save(user);
     }
-
+    
+    @Override
     public AuthResponse login(AuthRequest request) {
-        // Authenticate user (simplified) [cite: 216]
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found")); // [cite: 218]
+         User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
              throw new BadCredentialsException("Invalid password");
-        }
+         }
+         
+         Set<String> roles = user.getRoles().stream()
+                 .map(Enum::name)
+                 .collect(Collectors.toSet());
 
-        // Generate JWT [cite: 217]
-        String token = jwtProvider.generateToken(user.getId(), user.getEmail(), user.getRoles());
-
-        return new AuthResponse(token, user.getId(), user.getEmail(), 
-                user.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
+         String token = jwtProvider.generateToken(user.getEmail(), user.getId(), roles);
+         return new AuthResponse(token);
     }
 }

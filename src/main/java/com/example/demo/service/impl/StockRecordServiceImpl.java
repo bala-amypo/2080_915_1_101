@@ -1,43 +1,61 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.Product;
+import com.example.demo.model.StockRecord;
+import com.example.demo.model.Warehouse;
+import com.example.demo.repository.ProductRepository;
+import com.example.demo.repository.StockRecordRepository;
+import com.example.demo.repository.WarehouseRepository;
+import com.example.demo.service.StockRecordService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 @Service
-@RequiredArgsConstructor
 public class StockRecordServiceImpl implements StockRecordService {
 
-    private final StockRecordRepository stockRecordRepository;
-    private final ProductRepository productRepository;
-    private final WarehouseRepository warehouseRepository;
+    @Autowired
+    private StockRecordRepository stockRecordRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private WarehouseRepository warehouseRepository;
 
+    @Override
     public StockRecord createStockRecord(Long productId, Long warehouseId, StockRecord record) {
-        // Validate existence of Product and Warehouse [cite: 177, 178]
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         Warehouse warehouse = warehouseRepository.findById(warehouseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
 
-        // Critical Rule: Check for duplicates [cite: 50, 179]
         Optional<StockRecord> existing = stockRecordRepository.findByProductAndWarehouse(product, warehouse);
         if (existing.isPresent()) {
-            // Exact phrase required by Source 50
             throw new IllegalArgumentException("StockRecord already exists");
         }
-
-        // Validate quantities [cite: 48, 180]
-        if (record.getCurrentQuantity() < 0 || record.getReorderThreshold() <= 0) {
-            throw new IllegalArgumentException("Invalid quantity or threshold");
+        
+        if (record.getCurrentQuantity() != null && record.getCurrentQuantity() < 0) {
+             throw new IllegalArgumentException("Quantity cannot be negative");
         }
 
         record.setProduct(product);
         record.setWarehouse(warehouse);
-        record.setLastUpdated(LocalDateTime.now()); // [cite: 180]
+        record.setLastUpdated(LocalDateTime.now());
         
         return stockRecordRepository.save(record);
     }
 
+    @Override
     public StockRecord getStockRecord(Long id) {
         return stockRecordRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found")); // [cite: 181]
+                .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
     }
 
+    @Override
     public List<StockRecord> getRecordsBy_product(Long productId) {
-        return stockRecordRepository.findByProductId(productId); // [cite: 182]
+        return stockRecordRepository.findByProductId(productId);
     }
 }

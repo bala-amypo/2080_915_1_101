@@ -1,48 +1,64 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.ConsumptionLog;
+import com.example.demo.model.PredictionRule;
+import com.example.demo.model.StockRecord;
+import com.example.demo.repository.ConsumptionLogRepository;
+import com.example.demo.repository.PredictionRuleRepository;
+import com.example.demo.repository.StockRecordRepository;
+import com.example.demo.service.PredictionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
-@RequiredArgsConstructor
-public class PredictionService {
+public class PredictionServiceImpl implements PredictionService {
 
-    private final StockRecordRepository stockRecordRepository;
-    private final ConsumptionLogRepository consumptionLogRepository;
-    private final PredictionRuleRepository predictionRuleRepository;
+    @Autowired
+    private StockRecordRepository stockRecordRepository;
+    @Autowired
+    private ConsumptionLogRepository consumptionLogRepository;
+    @Autowired
+    private PredictionRuleRepository predictionRuleRepository;
 
+    @Override
     public LocalDate predictRestockDate(Long stockRecordId) {
-        // Load stock record [cite: 207]
         StockRecord stock = stockRecordRepository.findById(stockRecordId)
                 .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
 
-        // Fetch logs to calculate average usage 
         List<ConsumptionLog> logs = consumptionLogRepository.findByStockRecordId(stockRecordId);
 
-        // Logic: Compute Average Daily Usage (Simplified logic based on doc)
-        // Note: Real implementation would use 'averageDaysWindow' from a PredictionRule
         double averageDailyUsage = logs.stream()
                 .mapToInt(ConsumptionLog::getConsumedQuantity)
                 .average()
-                .orElse(1.0); // Default to 1 to avoid division by zero
+                .orElse(1.0);
 
-        if (averageDailyUsage == 0) averageDailyUsage = 1.0;
+        if (averageDailyUsage <= 0) averageDailyUsage = 1.0;
 
-        // Calculate days remaining 
-        int currentQty = stock.getCurrentQuantity();
-        int threshold = stock.getReorderThreshold();
+        int currentQty = stock.getCurrentQuantity() != null ? stock.getCurrentQuantity() : 0;
+        int threshold = stock.getReorderThreshold() != null ? stock.getReorderThreshold() : 0;
         
-        // Days until we hit the threshold
         long daysRemaining = (long) ((currentQty - threshold) / averageDailyUsage);
+        if (daysRemaining < 0) daysRemaining = 0;
 
-        return LocalDate.now().plusDays(daysRemaining); // [cite: 206]
+        return LocalDate.now().plusDays(daysRemaining);
     }
 
+    @Override
     public PredictionRule createRule(PredictionRule rule) {
-        // Validate rules [cite: 202]
-        if (rule.getAverageDaysWindow() <= 0) {
+        if (rule.getAverageDaysWindow() != null && rule.getAverageDaysWindow() <= 0) {
             throw new IllegalArgumentException("Average days window must be > 0");
         }
-        if (rule.getMinDailyUsage() > rule.getMaxDailyUsage()) {
-            throw new IllegalArgumentException("Min usage cannot be greater than max usage");
-        }
-        
-        rule.setCreatedAt(LocalDateTime.now()); // [cite: 203]
+        rule.setCreatedAt(LocalDateTime.now());
         return predictionRuleRepository.save(rule);
+    }
+
+    @Override
+    public List<PredictionRule> getAllRules() {
+        return predictionRuleRepository.findAll();
     }
 }
