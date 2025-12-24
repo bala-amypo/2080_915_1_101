@@ -12,12 +12,13 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>carbon-footprint-api</name>
-    <description>Carbon Footprint Estimation API</description>
+    <name>smart-inventory-restock-predictor</name>
+    <description>Smart Inventory Restock Predictor API</description>
 
     <properties>
         <java.version>17</java.version>
-        <jjwt.version>0.12.6</jjwt.version> </properties>
+        <jjwt.version>0.12.6</jjwt.version>
+    </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -152,22 +153,10 @@
                 <configuration>
                     <includes>
                         <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
                     </includes>
                 </configuration>
             </plugin>
-           <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.2.5</version>
-    <configuration>
-        <includes>
-            <include>**/*Test.java</include>
-            <include>**/*Tests.java</include>
-        </includes>
-    </configuration>
-</plugin>
-
-
         </plugins>
     </build>
 </project>
