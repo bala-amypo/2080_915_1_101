@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.config.JwtProvider;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.UserRegisterDto;
@@ -8,7 +9,6 @@ import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
-import com.example.demo.config.JwtProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
         this.jwtProvider = jwtProvider;
     }
 
-    // ================= REGISTER =================
     @Override
     public User register(UserRegisterDto dto) {
 
@@ -55,7 +54,8 @@ public class UserServiceImpl implements UserService {
         if (dto.getRoles() == null || dto.getRoles().isEmpty()) {
             roles = Set.of(Role.ROLE_USER);
         } else {
-            roles = dto.getRoles().stream()
+            roles = dto.getRoles()
+                    .stream()
                     .map(r -> Role.valueOf("ROLE_" + r.toUpperCase()))
                     .collect(Collectors.toSet());
         }
@@ -71,7 +71,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    // ================= LOGIN =================
     @Override
     public AuthResponse login(AuthRequest request) {
 
@@ -101,6 +100,9 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    // ================= GET BY EMAIL =================
     @Override
     public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+}
