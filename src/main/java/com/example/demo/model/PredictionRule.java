@@ -6,9 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "prediction_rules", uniqueConstraints = @UniqueConstraint(columnNames = "ruleName"))
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,13 +16,11 @@ public class PredictionRule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String ruleName;
 
     private Integer averageDaysWindow;
-
     private Integer minDailyUsage;
-
     private Integer maxDailyUsage;
 
     private LocalDateTime createdAt;

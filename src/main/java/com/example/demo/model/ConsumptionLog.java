@@ -6,9 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "consumption_logs")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,10 +16,9 @@ public class ConsumptionLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     private StockRecord stockRecord;
 
     private Integer consumedQuantity;
-
     private LocalDate consumedDate;
 }
