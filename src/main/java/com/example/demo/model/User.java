@@ -7,11 +7,12 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
-@Getter @Setter
+@Table(name = "users")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "users")
 public class User {
 
     @Id
@@ -26,8 +27,4 @@ public class User {
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
-
-    private LocalDateTime createdAt;
-}
+    @Enum
