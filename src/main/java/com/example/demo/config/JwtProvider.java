@@ -1,9 +1,12 @@
 package com.example.demo.config;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Set;
 
@@ -16,6 +19,10 @@ public class JwtProvider {
     @Value("${app.jwtExpirationMs:86400000}")
     private int jwtExpirationMs;
 
+    private SecretKey getKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    }
+
     public String generateToken(String email, Long userId, Set<String> roles) {
         return Jwts.builder()
                 .setSubject(email)
@@ -23,13 +30,14 @@ public class JwtProvider {
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(getKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
     public String getEmailFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(jwtSecret)
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build() // This .build() method is mandatory in 0.11.x+
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -37,12 +45,12 @@ public class JwtProvider {
     
     public Long getUserId(String token) {
         try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(jwtSecret)
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getKey())
+                    .build() // This .build() method is mandatory in 0.11.x+
                     .parseClaimsJws(token)
                     .getBody();
-            // Parse safely
-            return Long.valueOf(claims.get("userId").toString());
+            return claims.get("userId", Long.class);
         } catch (Exception e) {
             return null;
         }
@@ -50,21 +58,13 @@ public class JwtProvider {
 
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser()
-                    .setSigningKey(jwtSecret)
+            Jwts.parserBuilder()
+                    .setSigningKey(getKey())
+                    .build() // This .build() method is mandatory in 0.11.x+
                     .parseClaimsJws(authToken);
             return true;
-        } catch (SignatureException e) {
-            // Invalid JWT signature
-        } catch (MalformedJwtException e) {
-            // Invalid JWT token
-        } catch (ExpiredJwtException e) {
-            // Expired JWT token
-        } catch (UnsupportedJwtException e) {
-            // Unsupported JWT token
-        } catch (IllegalArgumentException e) {
-            // JWT claims string is empty
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
         }
-        return false;
     }
 }
