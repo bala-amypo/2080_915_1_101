@@ -52,7 +52,7 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- JWT -->
+		
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
@@ -71,7 +71,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- OpenAPI / Swagger UI -->
+		
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -95,7 +95,7 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
-		<!-- ✅ Added dependencies -->
+		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-crypto</artifactId>
@@ -118,7 +118,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency> 
-        <!-- JWT (ONLY ONE VERSION – FIXED) -->
+        
 <dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-api</artifactId>
@@ -148,7 +148,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<!-- ✅ Added release for Java 17 -->
+					
 					<release>17</release>
 					<annotationProcessorPaths>
 						<path>
