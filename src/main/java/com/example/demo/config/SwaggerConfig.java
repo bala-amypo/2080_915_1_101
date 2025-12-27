@@ -19,7 +19,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 // ✅ FORCE HTTPS SERVER (CRITICAL FIX)
                 .servers(List.of(
-                        new Server().url("https://9105.408procr.amypo.ai")
+                        new Server().url("https://9094.408procr.amypo.ai/")
                 ))
 
                 // ✅ JWT SECURITY
