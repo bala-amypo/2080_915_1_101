@@ -43,7 +43,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Access Denied: " + ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
-    // FIX FOR t2 AND t5: Explicitly handle Not Found exceptions to return 404 instead of 500
     @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
     public ResponseEntity<String> handleNotFound(Exception ex) {
         return new ResponseEntity<>("Resource Not Found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
@@ -51,7 +50,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGlobalException(Exception ex) {
-        // Log the exception to console for debugging if needed
         System.out.println("Global Exception Caught: " + ex.getClass().getName() + " - " + ex.getMessage());
         return new ResponseEntity<>("Internal Server Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
